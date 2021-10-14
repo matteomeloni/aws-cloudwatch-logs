@@ -266,5 +266,4 @@ class Builder
     {
         return $this->model->newInstance($attributes);
     }
-
 }
