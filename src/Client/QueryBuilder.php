@@ -21,8 +21,6 @@ class QueryBuilder
     {
         $this->model = $model;
         $this->wheres = $wheres;
-
-        $this->query = $this->getBaseQuery();
     }
 
     /**
@@ -30,28 +28,8 @@ class QueryBuilder
      */
     public function raw(): string
     {
-        foreach ($this->wheres as $index => $where) {
-            if ($index !== array_key_first($this->wheres)) {
-                $this->query .= " {$where['boolean']} ";
-            }
-
-            if (in_array($where['operator'], ['=', '!=', '>', '>=', '<', '<='])) {
-                $this->query .= "{$where['column']} {$where['operator']} '{$where['value']}'";
-            }
-
-            if(in_array($where['operator'], ['in', 'not in'])) {
-                $this->query .= "{$where['column']} {$where['operator']}" . json_encode($where['value']);
-            }
-
-            if(in_array($where['operator'], ['like', 'not like'])) {
-                $this->query .= "{$where['column']} {$where['operator']} /{$where['value']}/";
-            }
-
-            if(in_array($where['operator'], ['isempty', 'not isempty'])) {
-                $this->query .= "{$where['operator']}({$where['column']})";
-            }
-
-        }
+        $this->query .= $this->getBaseQuery();
+        $this->query .= $this->parseWheres();
 
         return Str::of($this->query)->replaceMatches("/(\s){2,}/", "");
     }
@@ -62,8 +40,38 @@ class QueryBuilder
     private function getBaseQuery(): string
     {
         return "filter @logStream = '{$this->model->getLogStreamName()}'
-            | fields @timestamp, @injectionTime, @message
-            | filter ";
+            | fields @timestamp, @injectionTime, @message";
     }
 
+    /**
+     * @return string
+     */
+    private function parseWheres(): string
+    {
+        $filter = "| filter ";
+
+        foreach ($this->wheres as $index => $where) {
+            if ($index !== array_key_first($this->wheres)) {
+                $filter .= " {$where['boolean']} ";
+            }
+
+            if (in_array($where['operator'], ['=', '!=', '>', '>=', '<', '<='])) {
+                $filter .= "{$where['column']} {$where['operator']} '{$where['value']}'";
+            }
+
+            if (in_array($where['operator'], ['in', 'not in'])) {
+                $filter .= "{$where['column']} {$where['operator']}" . json_encode($where['value']);
+            }
+
+            if (in_array($where['operator'], ['like', 'not like'])) {
+                $filter .= "{$where['column']} {$where['operator']} /{$where['value']}/";
+            }
+
+            if (in_array($where['operator'], ['isempty', 'not isempty'])) {
+                $filter .= "{$where['operator']}({$where['column']})";
+            }
+        }
+
+        return $filter;
+    }
 }
