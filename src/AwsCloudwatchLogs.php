@@ -13,19 +13,19 @@ abstract class AwsCloudwatchLogs
      *
      * @var string
      */
-    protected $logGroupName;
+    protected string $logGroupName;
 
     /**
      * The name of the log stream.
      *
      * @var string;
      */
-    protected $logStreamName;
+    protected string $logStreamName;
 
     /**
      * @var array
      */
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * Create a new Aws CloudWatch Logs model instance.
