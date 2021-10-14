@@ -134,6 +134,15 @@ abstract class AwsCloudwatchLogs
     }
 
     /**
+     * @param array $models
+     * @return AwsCloudWatchLogsCollection
+     */
+    public function newCollection(array $models = []): AwsCloudWatchLogsCollection
+    {
+        return new AwsCloudWatchLogsCollection($models);
+    }
+
+    /**
      * Convert the model instance to an array.
      *
      * @return array
