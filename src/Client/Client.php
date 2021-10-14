@@ -47,6 +47,28 @@ class Client
     }
 
     /**
+     * Lists log events from the specified log stream.
+     * You can list all the log events or filter using a time range.
+     *
+     * @param int $startTime
+     * @param int $endTime
+     * @param bool $startFromHead
+     * @return array
+     */
+    public function getLogEvents(int $startTime, int $endTime, bool $startFromHead): array
+    {
+        $logs = $this->client->getLogEvents([
+            'logGroupName' => $this->logGroupName,
+            'logStreamName' => $this->logStreamName,
+            'startFromHead' => $startFromHead,
+            'startTime' => $startTime,
+            'endTime' => $endTime
+        ])->toArray();
+
+        return $logs['events'] ?? [];
+    }
+
+    /**
      * Uploads a batch of log events to the specified log stream.
      *
      * @param array $data
