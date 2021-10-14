@@ -16,7 +16,6 @@ class Analyzer
      */
     public function __construct($log)
     {
-
         $this->log = $log;
     }
 
@@ -26,8 +25,8 @@ class Analyzer
     public function beautifyLog(): array
     {
         $attributes = $this->messageAnalyzer($this->log['message']);
-        $attributes['timestamps'] = Carbon::createFromTimestampMs($this->log['timestamp'])->format('Y-m-d H:i:s');
-        $attributes['ingestionTime'] = Carbon::createFromTimestampMs($this->log['ingestionTime'])->format('Y-m-d H:i:s');
+        $attributes['timestamps'] = $this->extractDateTime($this->log['timestamp']);
+        $attributes['ingestionTime'] = $this->extractDateTime($this->log['ingestionTime']);
 
         return $attributes;
     }
@@ -53,6 +52,18 @@ class Analyzer
      */
     private function isJson($message): bool
     {
-        return is_string($message) && is_array(json_decode($message, true)) && (json_last_error() == JSON_ERROR_NONE);
+        return is_string($message) &&
+            is_array(json_decode($message, true)) &&
+            (json_last_error() == JSON_ERROR_NONE);
+    }
+
+    /**
+     * @param $timestamp
+     * @return string
+     */
+    private function extractDateTime($timestamp): string
+    {
+        return Carbon::createFromTimestampMs($timestamp)
+            ->format('Y-m-d H:i:s');
     }
 }

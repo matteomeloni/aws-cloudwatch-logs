@@ -9,28 +9,28 @@ class Client
     /**
      * @var CloudWatchLogsClient
      */
-    private $client;
+    private CloudWatchLogsClient $client;
 
     /**
      * The sequence token obtained from the response of the previous PutLogEvents call.
      *
      * @var SequenceToken
      */
-    private $nextSequenceToken;
+    private SequenceToken $nextSequenceToken;
 
     /**
      * The name of the log group.
      *
      * @var string
      */
-    private $logGroupName;
+    private string $logGroupName;
 
     /**
      * The name of the log stream.
      *
      * @var string;
      */
-    private $logStreamName;
+    private string $logStreamName;
 
     /**
      * @param $logGroupName

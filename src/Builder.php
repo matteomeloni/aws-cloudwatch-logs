@@ -2,7 +2,6 @@
 
 namespace Matteomeloni\AwsCloudwatchLogs;
 
-use Illuminate\Support\Carbon;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
 use Matteomeloni\AwsCloudwatchLogs\Client\Client;
 
@@ -11,12 +10,12 @@ class Builder
     /**
      * @var AwsCloudwatchLogs
      */
-    protected $model;
+    protected AwsCloudwatchLogs $model;
 
     /**
      * @var Client
      */
-    protected $client;
+    protected Client $client;
 
     /**
      * @param AwsCloudwatchLogs $model
