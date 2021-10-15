@@ -2,6 +2,7 @@
 
 namespace Matteomeloni\AwsCloudwatchLogs;
 
+use Illuminate\Support\Str;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
 use Matteomeloni\AwsCloudwatchLogs\Client\Client;
 use Matteomeloni\AwsCloudwatchLogs\Client\QueryBuilder;
@@ -22,6 +23,21 @@ class Builder
      * @var array
      */
     protected array $wheres = [];
+
+    /**
+     * @var bool
+     */
+    private bool $useCloudWatchLogsInsight = false;
+
+    /**
+     * @var string|null
+     */
+    private ?string $cloudWatchLogsInsightQueryId;
+
+    /**
+     * @var string|null
+     */
+    private ?string $cloudWatchLogsInsightQueryStatus;
 
     /**
      * @param AwsCloudwatchLogs $model
@@ -178,7 +194,7 @@ class Builder
     }
 
     /**
-     * Get all logs.
+     * Get all the models from the AWS CloudWatch Logs.
      *
      * @param int|null $startTime
      * @param int|null $endTime
@@ -194,7 +210,7 @@ class Builder
     }
 
     /**
-     * Get all logs.
+     * Get all the models from the AWS CloudWatch Logs.
      *
      * @param int|null $startTime
      * @param int|null $endTime
@@ -210,6 +226,21 @@ class Builder
     }
 
     /**
+     * Schedules a query of a log group using CloudWatch Logs Insights.
+     *
+     * @param null $queryId
+     * @return Builder
+     */
+    public function query($queryId = null): Builder
+    {
+        $this->useCloudWatchLogsInsight = true;
+        $this->cloudWatchLogsInsightQueryId = $queryId;
+
+        return $this;
+    }
+
+    /**
+     * Get All Logs.
      * @param int $startTime
      * @param int $endTime
      * @param bool $startFromHead
@@ -217,13 +248,7 @@ class Builder
      */
     private function getAll(int $startTime, int $endTime, bool $startFromHead): AwsCloudWatchLogsCollection
     {
-        if(count($this->wheres) > 0) {
-            $raw = (new QueryBuilder($this->model, $this->wheres))->raw();
-            dd($raw, $this->wheres);
-        }
-
-        $iterator = $this->client
-            ->getLogEvents($startTime,$endTime,$startFromHead);
+        $iterator = $this->retrieveLogs($startTime, $endTime, $startFromHead);
 
         $results = [];
         foreach ($iterator as $item) {
@@ -234,10 +259,53 @@ class Builder
             $results[] = $model;
         }
 
-        return $this->model->newCollection($results);
+        $collection = $this->model->newCollection($results);
+
+        if($this->useCloudWatchLogsInsight) {
+            $collection->setCloudWatchLogsInsightQueryId($this->cloudWatchLogsInsightQueryId);
+            $collection->setCloudWatchLogsInsightQueryStatus($this->cloudWatchLogsInsightQueryStatus);
+        }
+
+        return $collection;
     }
 
-    public function create($attributes = [])
+    /**
+     * @param int $startTime
+     * @param int $endTime
+     * @param bool $startFromHead
+     * @return array
+     */
+    private function retrieveLogs(int $startTime, int $endTime, bool $startFromHead): array
+    {
+        if (!$this->useCloudWatchLogsInsight) {
+            return $this->client->getLogEvents($startTime, $endTime, $startFromHead);
+        }
+
+        $queryString = (new QueryBuilder($this->model, $this->wheres))->raw();
+
+        $result = $this->client->getQueryResults(
+            $this->cloudWatchLogsInsightQueryId ?? $this->client->startQuery($queryString, $startTime, $endTime)
+        );
+
+        $this->cloudWatchLogsInsightQueryId = $result['queryId'];
+        $this->cloudWatchLogsInsightQueryStatus = $result['status'];
+
+        return (collect($result['results']))->map(function ($log) {
+            return (collect($log))->mapWithKeys(function ($item) {
+                $field = Str::replace('@', '', $item['field']);
+                $value = $item['value'];
+                return [$field => $value];
+            });
+        })->toArray();
+    }
+
+    /**
+     * Save a new log and return the instance.
+     *
+     * @param array $attributes
+     * @return AwsCloudwatchLogs
+     */
+    public function create(array $attributes = []): AwsCloudwatchLogs
     {
         $newModelInstance = $this->newModelInstance($attributes);
 
@@ -248,6 +316,7 @@ class Builder
 
     /**
      * Insert new log into the aws cloudwatch logs stream.
+     *
      * @param array $attributes
      * @return bool
      */
