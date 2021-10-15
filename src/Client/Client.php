@@ -69,6 +69,49 @@ class Client
     }
 
     /**
+     * Schedules a query of a log group using CloudWatch Logs Insights.
+     * You specify the log group and time range to query and the query string to use.
+     *
+     * @param string $query
+     * @param int $startTime
+     * @param int $endTime
+     * @return string|null
+     */
+    public function startQuery(string $query, int $startTime, int $endTime): ?string
+    {
+        $logs = $this->client->startQuery([
+            'logGroupName' => $this->logGroupName,
+            'logStreamName' => $this->logStreamName,
+            'startTime' => $startTime,
+            'endTime' => $endTime,
+            'queryString' => $query
+        ])->toArray();
+
+        return $logs['queryId'] ?? null;
+    }
+
+    /**
+     * Returns the results from the specified query.
+     * If the value of the Status field in the output is Running, this operation returns only partial results.
+     * If you see a value of Scheduled or Running for the status, you can retry the operation later to see the final results.
+     *
+     * @param string $queryId
+     * @return array
+     */
+    public function getQueryResults(string $queryId): array
+    {
+        $logs = $this->client->getQueryResults([
+            'queryId' => $queryId
+        ])->toArray();
+
+        return [
+            'queryId' => $queryId,
+            'status' => $logs['status'],
+            'results' => $logs['results']
+        ];
+    }
+
+    /**
      * Uploads a batch of log events to the specified log stream.
      *
      * @param array $data

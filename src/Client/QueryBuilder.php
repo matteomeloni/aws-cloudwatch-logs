@@ -7,11 +7,20 @@ use Matteomeloni\AwsCloudwatchLogs\AwsCloudwatchLogs;
 
 class QueryBuilder
 {
+    /**
+     * @var AwsCloudwatchLogs
+     */
     private AwsCloudwatchLogs $model;
 
+    /**
+     * @var array
+     */
     private array $wheres;
 
-    private string $query;
+    /**
+     * @var string
+     */
+    private string $query = '';
 
     /**
      * @param AwsCloudwatchLogs $model

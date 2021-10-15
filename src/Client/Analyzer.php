@@ -25,8 +25,12 @@ class Analyzer
     public function beautifyLog(): array
     {
         $attributes = $this->messageAnalyzer($this->log['message']);
+
         $attributes['timestamps'] = $this->extractDateTime($this->log['timestamp']);
-        $attributes['ingestionTime'] = $this->extractDateTime($this->log['ingestionTime']);
+
+        $attributes['ingestionTime'] = isset($this->log['ingestionTime'])
+            ? $this->extractDateTime($this->log['ingestionTime'])
+            : null;
 
         return $attributes;
     }
