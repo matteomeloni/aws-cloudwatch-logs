@@ -17,6 +17,8 @@ class QueryBuilder
      */
     private array $wheres;
 
+    private array $sorts;
+
     /**
      * @var string
      */
@@ -25,11 +27,13 @@ class QueryBuilder
     /**
      * @param AwsCloudwatchLogs $model
      * @param array $wheres
+     * @param array $sorts
      */
-    public function __construct(AwsCloudwatchLogs $model, array $wheres = [])
+    public function __construct(AwsCloudwatchLogs $model, array $wheres = [], array $sorts = [])
     {
         $this->model = $model;
         $this->wheres = $wheres;
+        $this->sorts = $sorts;
     }
 
     /**
@@ -39,6 +43,7 @@ class QueryBuilder
     {
         $this->query .= $this->getBaseQuery();
         $this->query .= $this->parseWheres();
+        $this->query .= $this->parseSorts();
 
         return Str::of($this->query)->replaceMatches("/(\s){2,}/", "");
     }
@@ -82,5 +87,27 @@ class QueryBuilder
         }
 
         return $filter;
+    }
+
+    /**
+     * @return string
+     */
+    public function parseSorts(): string
+    {
+        $sort = "| sort ";
+
+        foreach ($this->sorts as $index => $item) {
+            $column = ($item['column'] === 'timestamp')
+                ? "@timestamp"
+                : $item['column'];
+
+            $sort .= "{$column} {$item['direction']}";
+
+            if ($index !== array_key_last($this->sorts)) {
+                $sort .= " ,";
+            }
+        }
+
+        return $sort;
     }
 }
