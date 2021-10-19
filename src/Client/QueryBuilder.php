@@ -48,7 +48,8 @@ class QueryBuilder
         $this->fields = $properties['select'] ?? [];
         $this->wheres = $properties['wheres'] ?? [];
         $this->sorts = $properties['sorts'] ?? [];
-        $this->limit = $properties['limit'] ?? [];
+        $this->limit = $properties['limit'] ?? null;
+
     }
 
     /**
