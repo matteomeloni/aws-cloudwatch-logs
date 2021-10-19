@@ -25,6 +25,10 @@ class Builder
     protected array $wheres = [];
 
     /**
+     * @var array
+     */
+    protected array $sorts = [];
+    /**
      * @var bool
      */
     private bool $useCloudWatchLogsInsight = false;
@@ -194,6 +198,34 @@ class Builder
     }
 
     /**
+     * Add an "order by" clause to the query.
+     *
+     * @param string $column
+     * @param string $direction
+     * @return Builder
+     */
+    public function orderBy(string $column, string $direction = 'asc'): Builder
+    {
+        $this->sorts[] = [
+            'column' => $column,
+            'direction' => $direction
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Add a descending "order by" clause to the query.
+     *
+     * @param string $column
+     * @return $this
+     */
+    public function orderByDesc(string $column): Builder
+    {
+        return $this->orderBy($column, 'desc');
+    }
+
+    /**
      * Get all the models from the AWS CloudWatch Logs.
      *
      * @param int|null $startTime
@@ -281,7 +313,7 @@ class Builder
             return $this->client->getLogEvents($startTime, $endTime, $startFromHead);
         }
 
-        $queryString = (new QueryBuilder($this->model, $this->wheres))->raw();
+        $queryString = (new QueryBuilder($this->model, $this->wheres, $this->sorts))->raw();
 
         $result = $this->client->getQueryResults(
             $this->cloudWatchLogsInsightQueryId ?? $this->client->startQuery($queryString, $startTime, $endTime)
