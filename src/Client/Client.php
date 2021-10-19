@@ -123,7 +123,12 @@ class Client
             'logRecordPointer' => $ptr
         ])->toArray();
 
-        return $result['logRecord'] ?? null;
+        return [
+            'ingestionTime' => (int)$result['logRecord']['@ingestionTime'] ?? null,
+            'timestamp' => (int)$result['logRecord']['@timestamp'] ?? null,
+            'message' => $result['logRecord']['@message'] ?? null,
+            'ptr' => $ptr
+        ];
     }
 
     /**
