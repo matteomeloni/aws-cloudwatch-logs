@@ -119,16 +119,20 @@ class Client
      */
     public function getLogRecord(string $ptr): ?array
     {
-        $result = $this->client->getLogRecord([
-            'logRecordPointer' => $ptr
-        ])->toArray();
+        try {
+            $result = $this->client->getLogRecord([
+                'logRecordPointer' => $ptr
+            ])->toArray();
 
-        return [
-            'ingestionTime' => (int)$result['logRecord']['@ingestionTime'] ?? null,
-            'timestamp' => (int)$result['logRecord']['@timestamp'] ?? null,
-            'message' => $result['logRecord']['@message'] ?? null,
-            'ptr' => $ptr
-        ];
+            return [
+                'ingestionTime' => (int)$result['logRecord']['@ingestionTime'] ?? null,
+                'timestamp' => (int)$result['logRecord']['@timestamp'] ?? null,
+                'message' => $result['logRecord']['@message'] ?? null,
+                'ptr' => $ptr
+            ];
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
