@@ -342,11 +342,10 @@ class Builder
             return $this->client->getLogEvents($startTime, $endTime, $startFromHead);
         }
 
-        $queryString = (new QueryBuilder($this->model, $this->wheres, $this->sorts, $this->limit))->raw();
+        $queryId = $this->cloudWatchLogsInsightQueryId
+            ?: $this->client->startQuery($this->buildQuery(), $startTime, $endTime);
 
-        $result = $this->client->getQueryResults(
-            $this->cloudWatchLogsInsightQueryId ?? $this->client->startQuery($queryString, $startTime, $endTime)
-        );
+        $result = $this->client->getQueryResults($queryId);
 
         $this->cloudWatchLogsInsightQueryId = $result['queryId'];
         $this->cloudWatchLogsInsightQueryStatus = $result['status'];
@@ -395,5 +394,19 @@ class Builder
     private function newModelInstance(array $attributes = []): AwsCloudwatchLogs
     {
         return $this->model->newInstance($attributes);
+    }
+
+    /**
+     * @return string
+     */
+    private function buildQuery(): string
+    {
+        $properties = [
+            'wheres' => $this->wheres,
+            'sorts' => $this->sorts,
+            'limit' => $this->limit
+        ];
+
+        return (new QueryBuilder($this->model, $properties))->raw();
     }
 }
