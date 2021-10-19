@@ -28,8 +28,8 @@ class Analyzer
                 ? $this->messageAnalyzer($this->log['message'])
                 : $this->log;
 
+        $attributes['ptr'] = $this->log['ptr'];
         $attributes['timestamp'] = $this->extractDateTime($this->log['timestamp']);
-
         $attributes['ingestionTime'] = $this->extractDateTime($this->log['ingestionTime']);
 
         return $attributes;
