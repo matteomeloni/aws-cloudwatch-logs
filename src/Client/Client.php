@@ -112,6 +112,21 @@ class Client
     }
 
     /**
+     * Retrieves all the fields and values of a single log event
+     *
+     * @param string $ptr
+     * @return array|null
+     */
+    public function getLogRecord(string $ptr): ?array
+    {
+        $result = $this->client->getLogRecord([
+            'logRecordPointer' => $ptr
+        ])->toArray();
+
+        return $result['logRecord'] ?? null;
+    }
+
+    /**
      * Uploads a batch of log events to the specified log stream.
      *
      * @param array $data
