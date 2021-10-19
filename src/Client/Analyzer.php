@@ -20,13 +20,23 @@ class Analyzer
     }
 
     /**
+     * @param array $columns
      * @return array
      */
-    public function beautifyLog(): array
+    public function beautifyLog(array $columns = ['*']): array
     {
         $attributes = (isset($this->log['message']))
-                ? $this->messageAnalyzer($this->log['message'])
-                : $this->log;
+            ? $this->messageAnalyzer($this->log['message'])
+            : $this->log;
+
+        if (! in_array('*', $columns)) {
+            $attributes = collect($attributes)
+                ->mapWithKeys(function ($value, $field) use ($columns) {
+                    return in_array($field, $columns)
+                        ? [$field => $value]
+                        : null;
+                })->toArray();
+        }
 
         $attributes['ptr'] = $this->log['ptr'];
         $attributes['timestamp'] = $this->extractDateTime($this->log['timestamp']);

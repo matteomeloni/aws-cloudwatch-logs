@@ -78,6 +78,20 @@ class Builder
     }
 
     /**
+     * Schedules a query of a log group using CloudWatch Logs Insights.
+     *
+     * @param null $queryId
+     * @return Builder
+     */
+    public function query($queryId = null): Builder
+    {
+        $this->useCloudWatchLogsInsight = true;
+        $this->cloudWatchLogsInsightQueryId = $queryId;
+
+        return $this;
+    }
+
+    /**
      * Add a "where" clause to the query.
      *
      * @param $column
@@ -94,7 +108,7 @@ class Builder
 
         $this->wheres[] = [
             'column' => $column,
-            'operator' =>$operator,
+            'operator' => $operator,
             'value' => $value,
             'boolean' => $boolean,
         ];
@@ -276,47 +290,37 @@ class Builder
     /**
      * Get all the models from the AWS CloudWatch Logs.
      *
+     * @param array $columns
      * @param int|null $startTime
      * @param int|null $endTime
      * @param bool $startFromHead
      * @return AwsCloudWatchLogsCollection
      */
-    public function get(int $startTime = null, int $endTime = null, bool $startFromHead = true): AwsCloudWatchLogsCollection
+    public function get(array $columns = ['*'], int $startTime = null, int $endTime = null, bool $startFromHead = true): AwsCloudWatchLogsCollection
     {
         $startTime ??= now()->startOfDay()->timestamp * 1000;
         $endTime ??= now()->endOfDay()->timestamp * 1000;
 
-        return $this->all($startTime, $endTime, $startFromHead);
+        return $this->all($columns, $startTime, $endTime, $startFromHead);
     }
 
     /**
      * Get all the models from the AWS CloudWatch Logs.
      *
+     * @param array $columns
      * @param int|null $startTime
      * @param int|null $endTime
      * @param bool $startFromHead
      * @return AwsCloudWatchLogsCollection
      */
-    public function all(int $startTime = null, int $endTime = null, bool $startFromHead = true): AwsCloudWatchLogsCollection
+    public function all(array $columns = ['*'], int $startTime = null, int $endTime = null, bool $startFromHead = true): AwsCloudWatchLogsCollection
     {
+        $this->columns = $columns;
+
         $startTime ??= now()->startOfDay()->timestamp * 1000;
         $endTime ??= now()->endOfDay()->timestamp * 1000;
 
         return $this->getAll($startTime, $endTime, $startFromHead);
-    }
-
-    /**
-     * Schedules a query of a log group using CloudWatch Logs Insights.
-     *
-     * @param null $queryId
-     * @return Builder
-     */
-    public function query($queryId = null): Builder
-    {
-        $this->useCloudWatchLogsInsight = true;
-        $this->cloudWatchLogsInsightQueryId = $queryId;
-
-        return $this;
     }
 
     /**
@@ -332,8 +336,9 @@ class Builder
 
         $results = [];
         foreach ($iterator as $item) {
+
             $model = $this->newModelInstance(
-                (new Analyzer($item))->beautifyLog()
+                (new Analyzer($item))->beautifyLog($this->columns)
             );
 
             $results[] = $model;
@@ -341,7 +346,7 @@ class Builder
 
         $collection = $this->model->newCollection($results);
 
-        if($this->useCloudWatchLogsInsight) {
+        if ($this->useCloudWatchLogsInsight) {
             $collection->setCloudWatchLogsInsightQueryId($this->cloudWatchLogsInsightQueryId);
             $collection->setCloudWatchLogsInsightQueryStatus($this->cloudWatchLogsInsightQueryStatus);
         }
@@ -359,6 +364,10 @@ class Builder
     {
         if (!$this->useCloudWatchLogsInsight) {
             return $this->client->getLogEvents($startTime, $endTime, $startFromHead);
+        }
+
+        if (!empty ($columns)) {
+            $this->columns = $columns;
         }
 
         $queryId = $this->cloudWatchLogsInsightQueryId
@@ -382,9 +391,10 @@ class Builder
      * Find a model by its ptr.
      *
      * @param string $ptr
+     * @param array $columns
      * @return AwsCloudwatchLogs|null
      */
-    public function find(string $ptr): ?AwsCloudwatchLogs
+    public function find(string $ptr, array $columns = ['*']): ?AwsCloudwatchLogs
     {
         $result = $this->client->getLogRecord($ptr);
 
@@ -393,7 +403,7 @@ class Builder
         }
 
         return $this->newModelInstance(
-            (new Analyzer($result))->beautifyLog()
+            (new Analyzer($result))->beautifyLog($columns)
         );
     }
 
@@ -401,14 +411,15 @@ class Builder
      * Find multiple models by their ptr.
      *
      * @param array $ids
+     * @param array $columns
      * @return AwsCloudWatchLogsCollection
      */
-    public function findMany(array $ids): AwsCloudWatchLogsCollection
+    public function findMany(array $ids, array $columns = ['*']): AwsCloudWatchLogsCollection
     {
         $results = [];
 
         foreach ($ids as $id) {
-            $results[] = $this->find($id);
+            $results[] = $this->find($id, $columns);
         }
 
         return $this->model->newCollection($results);
@@ -418,13 +429,14 @@ class Builder
      * Find a model by its ptr or throw an exception.
      *
      * @param string $ptr
+     * @param array $columns
      * @return AwsCloudwatchLogs
      */
-    public function findOrFail(string $ptr): AwsCloudwatchLogs
+    public function findOrFail(string $ptr, array $columns = ['*']): AwsCloudwatchLogs
     {
-        $result = $this->find($ptr);
+        $result = $this->find($ptr, $columns);
 
-        if($result === null) {
+        if ($result === null) {
             throw (new LogNotFoundException)->setModel(
                 get_class($this->model), $ptr
             );

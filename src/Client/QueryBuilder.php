@@ -82,7 +82,8 @@ class QueryBuilder
      */
     private function parseFields(): string
     {
-        if(empty($this->fields)) {
+
+        if(in_array('*', $this->fields)) {
             return "| fields @timestamp, @ingestionTime, @message";
         }
 
