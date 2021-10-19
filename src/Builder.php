@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
 use Matteomeloni\AwsCloudwatchLogs\Client\Client;
 use Matteomeloni\AwsCloudwatchLogs\Client\QueryBuilder;
+use Matteomeloni\AwsCloudwatchLogs\Exceptions\LogNotFoundException;
 
 class Builder
 {
@@ -375,6 +376,61 @@ class Builder
                 return [$field => $value];
             });
         })->toArray();
+    }
+
+    /**
+     * Find a model by its ptr.
+     *
+     * @param string $ptr
+     * @return AwsCloudwatchLogs|null
+     */
+    public function find(string $ptr): ?AwsCloudwatchLogs
+    {
+        $result = $this->client->getLogRecord($ptr);
+
+        if ($result === null) {
+            return null;
+        }
+
+        return $this->newModelInstance(
+            (new Analyzer($result))->beautifyLog()
+        );
+    }
+
+    /**
+     * Find multiple models by their ptr.
+     *
+     * @param array $ids
+     * @return AwsCloudWatchLogsCollection
+     */
+    public function findMany(array $ids): AwsCloudWatchLogsCollection
+    {
+        $results = [];
+
+        foreach ($ids as $id) {
+            $results[] = $this->find($id);
+        }
+
+        return $this->model->newCollection($results);
+    }
+
+    /**
+     * Find a model by its ptr or throw an exception.
+     *
+     * @param string $ptr
+     * @return AwsCloudwatchLogs
+     */
+    public function findOrFail(string $ptr): AwsCloudwatchLogs
+    {
+        $result = $this->find($ptr);
+
+        if($result === null) {
+            throw (new LogNotFoundException)->setModel(
+                get_class($this->model), $ptr
+            );
+        }
+
+        return $result;
     }
 
     /**
