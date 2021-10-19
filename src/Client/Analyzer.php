@@ -26,7 +26,7 @@ class Analyzer
     {
         $attributes = $this->messageAnalyzer($this->log['message']);
 
-        $attributes['timestamps'] = $this->extractDateTime($this->log['timestamp']);
+        $attributes['timestamp'] = $this->extractDateTime($this->log['timestamp']);
 
         $attributes['ingestionTime'] = isset($this->log['ingestionTime'])
             ? $this->extractDateTime($this->log['ingestionTime'])
@@ -67,7 +67,10 @@ class Analyzer
      */
     private function extractDateTime($timestamp): string
     {
-        return Carbon::createFromTimestampMs($timestamp)
-            ->format('Y-m-d H:i:s');
+        $dateTime =  (is_int($timestamp))
+            ? Carbon::createFromTimestampMs($timestamp)
+            : Carbon::createFromFormat('Y-m-d H:i:s.u', $timestamp);
+
+        return $dateTime->format('Y-m-d H:i:s');
     }
 }
