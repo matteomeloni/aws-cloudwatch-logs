@@ -17,7 +17,15 @@ class QueryBuilder
      */
     private array $wheres;
 
+    /**
+     * @var array
+     */
     private array $sorts;
+
+    /**
+     * @var int|null
+     */
+    private ?int $limit;
 
     /**
      * @var string
@@ -28,12 +36,14 @@ class QueryBuilder
      * @param AwsCloudwatchLogs $model
      * @param array $wheres
      * @param array $sorts
+     * @param int|null $limit
      */
-    public function __construct(AwsCloudwatchLogs $model, array $wheres = [], array $sorts = [])
+    public function __construct(AwsCloudwatchLogs $model, array $wheres = [], array $sorts = [], ?int $limit = null)
     {
         $this->model = $model;
         $this->wheres = $wheres;
         $this->sorts = $sorts;
+        $this->limit = $limit;
     }
 
     /**
@@ -44,6 +54,10 @@ class QueryBuilder
         $this->query .= $this->getBaseQuery();
         $this->query .= $this->parseWheres();
         $this->query .= $this->parseSorts();
+
+        if($this->limit) {
+            $this->query .= "| limit {$this->limit}";
+        }
 
         return Str::of($this->query)->replaceMatches("/(\s){2,}/", "");
     }
@@ -58,10 +72,14 @@ class QueryBuilder
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    private function parseWheres(): string
+    private function parseWheres(): ?string
     {
+        if(empty($this->wheres)) {
+            return null;
+        }
+
         $filter = "| filter ";
 
         foreach ($this->wheres as $index => $where) {
@@ -90,10 +108,14 @@ class QueryBuilder
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function parseSorts(): string
+    public function parseSorts(): ?string
     {
+        if(empty($this->sorts)) {
+            return null;
+        }
+
         $sort = "| sort ";
 
         foreach ($this->sorts as $index => $item) {

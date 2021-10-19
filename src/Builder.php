@@ -28,6 +28,11 @@ class Builder
      * @var array
      */
     protected array $sorts = [];
+
+    /**
+     * @var int|null
+     */
+    protected ?int $limit = null;
     /**
      * @var bool
      */
@@ -226,6 +231,30 @@ class Builder
     }
 
     /**
+     * Set the "limit" value of the query.
+     *
+     * @param int $value
+     * @return $this
+     */
+    public function limit(int $value): Builder
+    {
+        $this->limit = $value;
+
+        return $this;
+    }
+
+    /**
+     * Alias to set the "limit" value of the query.
+     *
+     * @param $value
+     * @return $this|Builder
+     */
+    public function take($value): Builder
+    {
+        return $this->limit($value);
+    }
+
+    /**
      * Get all the models from the AWS CloudWatch Logs.
      *
      * @param int|null $startTime
@@ -313,7 +342,7 @@ class Builder
             return $this->client->getLogEvents($startTime, $endTime, $startFromHead);
         }
 
-        $queryString = (new QueryBuilder($this->model, $this->wheres, $this->sorts))->raw();
+        $queryString = (new QueryBuilder($this->model, $this->wheres, $this->sorts, $this->limit))->raw();
 
         $result = $this->client->getQueryResults(
             $this->cloudWatchLogsInsightQueryId ?? $this->client->startQuery($queryString, $startTime, $endTime)
