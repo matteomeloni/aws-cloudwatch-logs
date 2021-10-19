@@ -24,13 +24,13 @@ class Analyzer
      */
     public function beautifyLog(): array
     {
-        $attributes = $this->messageAnalyzer($this->log['message']);
+        $attributes = (isset($this->log['message']))
+                ? $this->messageAnalyzer($this->log['message'])
+                : $this->log;
 
         $attributes['timestamp'] = $this->extractDateTime($this->log['timestamp']);
 
-        $attributes['ingestionTime'] = isset($this->log['ingestionTime'])
-            ? $this->extractDateTime($this->log['ingestionTime'])
-            : null;
+        $attributes['ingestionTime'] = $this->extractDateTime($this->log['ingestionTime']);
 
         return $attributes;
     }
@@ -63,11 +63,15 @@ class Analyzer
 
     /**
      * @param $timestamp
-     * @return string
+     * @return string|null
      */
-    private function extractDateTime($timestamp): string
+    private function extractDateTime($timestamp): ?string
     {
-        $dateTime =  (is_int($timestamp))
+        if ($timestamp === null) {
+            return null;
+        }
+
+        $dateTime = (is_int($timestamp))
             ? Carbon::createFromTimestampMs($timestamp)
             : Carbon::createFromFormat('Y-m-d H:i:s.u', $timestamp);
 
