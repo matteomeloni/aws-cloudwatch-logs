@@ -34,16 +34,14 @@ class QueryBuilder
 
     /**
      * @param AwsCloudwatchLogs $model
-     * @param array $wheres
-     * @param array $sorts
-     * @param int|null $limit
+     * @param array $properties
      */
-    public function __construct(AwsCloudwatchLogs $model, array $wheres = [], array $sorts = [], ?int $limit = null)
+    public function __construct(AwsCloudwatchLogs $model, array $properties = [])
     {
         $this->model = $model;
-        $this->wheres = $wheres;
-        $this->sorts = $sorts;
-        $this->limit = $limit;
+        $this->wheres = $properties['wheres'] ?? [];
+        $this->sorts = $properties['sorts'] ?? [];
+        $this->limit = $properties['limit'] ?? [];
     }
 
     /**
