@@ -22,6 +22,11 @@ class Builder
     /**
      * @var array
      */
+    protected array $columns = [];
+
+    /**
+     * @var array
+     */
     protected array $wheres = [];
 
     /**
@@ -56,6 +61,19 @@ class Builder
         $this->model = $model;
 
         $this->client = new Client($this->model->getLogGroupName(), $this->model->getLogStreamName());
+    }
+
+    /**
+     * Set the columns to be selected.
+     *
+     * @param array $columns
+     * @return $this
+     */
+    public function select(array $columns = []): Builder
+    {
+        $this->columns = $columns;
+
+        return $this;
     }
 
     /**
@@ -402,6 +420,7 @@ class Builder
     private function buildQuery(): string
     {
         $properties = [
+            'select' => $this->columns,
             'wheres' => $this->wheres,
             'sorts' => $this->sorts,
             'limit' => $this->limit

@@ -2,6 +2,7 @@
 
 namespace Matteomeloni\AwsCloudwatchLogs\Client;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Matteomeloni\AwsCloudwatchLogs\AwsCloudwatchLogs;
 
@@ -11,6 +12,11 @@ class QueryBuilder
      * @var AwsCloudwatchLogs
      */
     private AwsCloudwatchLogs $model;
+
+    /**
+     * @var array
+     */
+    private array $fields;
 
     /**
      * @var array
@@ -39,6 +45,7 @@ class QueryBuilder
     public function __construct(AwsCloudwatchLogs $model, array $properties = [])
     {
         $this->model = $model;
+        $this->fields = $properties['select'] ?? [];
         $this->wheres = $properties['wheres'] ?? [];
         $this->sorts = $properties['sorts'] ?? [];
         $this->limit = $properties['limit'] ?? [];
@@ -50,6 +57,7 @@ class QueryBuilder
     public function raw(): string
     {
         $this->query .= $this->getBaseQuery();
+        $this->query .= $this->parseFields();
         $this->query .= $this->parseWheres();
         $this->query .= $this->parseSorts();
 
@@ -65,8 +73,28 @@ class QueryBuilder
      */
     private function getBaseQuery(): string
     {
-        return "filter @logStream = '{$this->model->getLogStreamName()}'
-            | fields @timestamp, @injectionTime, @message";
+        return "filter @logStream = '{$this->model->getLogStreamName()}'";
+    }
+
+    /**
+     * @return string
+     */
+    private function parseFields(): string
+    {
+        if(empty($this->fields)) {
+            return "| fields @timestamp, @ingestionTime, @message";
+        }
+
+        if(! Arr::exists($this->fields, '@timestamp')) {
+            $this->fields[] = '@timestamp';
+        }
+
+        if(! Arr::exists($this->fields, '@ingestionTime')) {
+            $this->fields[] = '@ingestionTime';
+        }
+
+        return "| fields " . implode(',', $this->fields);
+
     }
 
     /**
