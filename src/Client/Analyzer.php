@@ -38,7 +38,7 @@ class Analyzer
                 })->toArray();
         }
 
-        $attributes['ptr'] = $this->log['ptr'];
+        $attributes['ptr'] = $this->log['ptr'] ?? null;
         $attributes['timestamp'] = $this->extractDateTime($this->log['timestamp']);
         $attributes['ingestionTime'] = $this->extractDateTime($this->log['ingestionTime']);
 
