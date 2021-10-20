@@ -120,6 +120,12 @@ class QueryBuilder
                 $filter .= "{$where['column']} {$where['operator']}" . json_encode($where['value']);
             }
 
+            if ($where['operator'] === 'between') {
+                [$min, $max] = $where['value'];
+
+                $filter .= "({$where['column']} <= {$min} and {$where['column']} >= {$max})";
+            }
+
             if (in_array($where['operator'], ['like', 'not like'])) {
                 $filter .= "{$where['column']} {$where['operator']} /{$where['value']}/";
             }

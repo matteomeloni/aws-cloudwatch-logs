@@ -36,14 +36,25 @@ class Builder
     protected array $sorts = [];
 
     /**
+     * @var int|null
+     */
+    protected ?int $limit = null;
+
+    /**
      * @var bool
      */
     protected bool $startFromHead = true;
 
     /**
-     * @var int|null
+     * @var int
      */
-    protected ?int $limit = null;
+    private int $startTime;
+
+    /**
+     * @var int
+     */
+    private int $endTime;
+
     /**
      * @var bool
      */
@@ -65,6 +76,8 @@ class Builder
     public function __construct(AwsCloudwatchLogs $model)
     {
         $this->model = $model;
+        $this->startTime = now()->startOfDay()->timestamp * 1000;
+        $this->endTime = now()->endOfDay()->timestamp * 1000;
 
         $this->client = new Client($this->model->getLogGroupName(), $this->model->getLogStreamName());
     }
@@ -170,6 +183,31 @@ class Builder
     public function whereNotIn(string $column, array $values, string $boolean = 'and'): Builder
     {
         return $this->where($column, 'not in', $values, $boolean);
+    }
+
+    /**
+     * Add a "where between" clause to the query.
+     *
+     * @param string $column
+     * @param array $values
+     * @param string $boolean
+     * @return $this
+     */
+    public function whereBetween(string $column, array $values, string $boolean = 'and'): Builder
+    {
+        return $this->where($column, 'between', $values, $boolean);
+    }
+
+    /**
+     * Add an "or where between" clause to the query.
+     *
+     * @param string $column
+     * @param array $values
+     * @return $this
+     */
+    public function orWhereBetween(string $column, array $values): Builder
+    {
+        return $this->where($column, 'between', $values, 'or');
     }
 
     /**
@@ -296,45 +334,34 @@ class Builder
      * Get all the models from the AWS CloudWatch Logs.
      *
      * @param array $columns
-     * @param int|null $startTime
-     * @param int|null $endTime
      * @return AwsCloudWatchLogsCollection
      */
-    public function get(array $columns = ['*'], int $startTime = null, int $endTime = null): AwsCloudWatchLogsCollection
+    public function get(array $columns = ['*']): AwsCloudWatchLogsCollection
     {
-        $startTime ??= now()->startOfDay()->timestamp * 1000;
-        $endTime ??= now()->endOfDay()->timestamp * 1000;
-
-        return $this->all($columns, $startTime, $endTime);
+        return $this->all($columns);
     }
 
     /**
      * Get all the models from the AWS CloudWatch Logs.
      *
      * @param array $columns
-     * @param int|null $startTime
-     * @param int|null $endTime
      * @return AwsCloudWatchLogsCollection
      */
-    public function all(array $columns = ['*'], int $startTime = null, int $endTime = null): AwsCloudWatchLogsCollection
+    public function all(array $columns = ['*']): AwsCloudWatchLogsCollection
     {
         $this->columns = $columns;
 
-        $startTime ??= now()->startOfDay()->timestamp * 1000;
-        $endTime ??= now()->endOfDay()->timestamp * 1000;
-
-        return $this->getAll($startTime, $endTime);
+        return $this->getAll();
     }
 
     /**
      * Get All Logs.
-     * @param int $startTime
-     * @param int $endTime
+     *
      * @return AwsCloudWatchLogsCollection
      */
-    private function getAll(int $startTime, int $endTime): AwsCloudWatchLogsCollection
+    private function getAll(): AwsCloudWatchLogsCollection
     {
-        $iterator = $this->retrieveLogs($startTime, $endTime);
+        $iterator = $this->retrieveLogs();
 
         $results = [];
         foreach ($iterator as $index => $item) {
@@ -354,18 +381,20 @@ class Builder
     }
 
     /**
-     * @param int $startTime
-     * @param int $endTime
      * @return array
      */
-    private function retrieveLogs(int $startTime, int $endTime): array
+    private function retrieveLogs(): array
     {
+        if($timeRange = $this->extractTimeRange()) {
+            [$this->startTime, $this->endTime] = $timeRange;
+        }
+
         if (!$this->useCloudWatchLogsInsight) {
-            return $this->client->getLogEvents($startTime, $endTime, $this->startFromHead);
+            return $this->client->getLogEvents($this->startTime, $this->endTime, $this->startFromHead);
         }
 
         $queryId = $this->cloudWatchLogsInsightQueryId
-            ?: $this->client->startQuery($this->buildQuery(), $startTime, $endTime);
+            ?: $this->client->startQuery($this->buildQuery(), $this->startTime, $this->endTime);
 
         $result = $this->client->getQueryResults($queryId);
 
@@ -481,14 +510,29 @@ class Builder
      */
     private function buildQuery(): string
     {
+        $wheres = collect($this->wheres)
+            ->filter(function ($item) {
+                return $item['column'] !== 'timestamp';
+            })->toArray();
+
         $properties = [
             'select' => $this->columns,
-            'wheres' => $this->wheres,
+            'wheres' => $wheres,
             'sorts' => $this->sorts,
             'limit' => $this->limit
         ];
 
         return (new QueryBuilder($this->model, $properties))->raw();
+    }
+
+    /**
+     * @return array|null
+     */
+    private function extractTimeRange(): ?array
+    {
+        return collect($this->wheres)->filter(function ($where) {
+            return $where['column'] === 'timestamp';
+        })->first()['value'];
     }
 
     /**
