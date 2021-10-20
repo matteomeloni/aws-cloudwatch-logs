@@ -57,8 +57,8 @@ class QueryBuilder
      */
     public function raw(): string
     {
-        $this->query .= $this->getBaseQuery();
         $this->query .= $this->parseFields();
+        $this->query .= $this->setLogStream();
         $this->query .= $this->parseWheres();
         $this->query .= $this->parseSorts();
 
@@ -72,9 +72,9 @@ class QueryBuilder
     /**
      * @return string
      */
-    private function getBaseQuery(): string
+    private function setLogStream(): string
     {
-        return "filter @logStream = '{$this->model->getLogStreamName()}'";
+        return "| filter @logStream = '{$this->model->getLogStreamName()}'";
     }
 
     /**
@@ -84,7 +84,7 @@ class QueryBuilder
     {
 
         if(in_array('*', $this->fields)) {
-            return "| fields @timestamp, @ingestionTime, @message";
+            return "fields @timestamp, @ingestionTime, @message";
         }
 
         if(! Arr::exists($this->fields, '@timestamp')) {
