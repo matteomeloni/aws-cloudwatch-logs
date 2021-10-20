@@ -2,7 +2,6 @@
 
 namespace Matteomeloni\AwsCloudwatchLogs;
 
-use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
 use Matteomeloni\AwsCloudwatchLogs\Client\Client;
@@ -35,6 +34,11 @@ class Builder
      * @var array
      */
     protected array $sorts = [];
+
+    /**
+     * @var bool
+     */
+    protected bool $startFromHead = true;
 
     /**
      * @var int|null
@@ -294,15 +298,14 @@ class Builder
      * @param array $columns
      * @param int|null $startTime
      * @param int|null $endTime
-     * @param bool $startFromHead
      * @return AwsCloudWatchLogsCollection
      */
-    public function get(array $columns = ['*'], int $startTime = null, int $endTime = null, bool $startFromHead = true): AwsCloudWatchLogsCollection
+    public function get(array $columns = ['*'], int $startTime = null, int $endTime = null): AwsCloudWatchLogsCollection
     {
         $startTime ??= now()->startOfDay()->timestamp * 1000;
         $endTime ??= now()->endOfDay()->timestamp * 1000;
 
-        return $this->all($columns, $startTime, $endTime, $startFromHead);
+        return $this->all($columns, $startTime, $endTime);
     }
 
     /**
@@ -311,38 +314,33 @@ class Builder
      * @param array $columns
      * @param int|null $startTime
      * @param int|null $endTime
-     * @param bool $startFromHead
      * @return AwsCloudWatchLogsCollection
      */
-    public function all(array $columns = ['*'], int $startTime = null, int $endTime = null, bool $startFromHead = true): AwsCloudWatchLogsCollection
+    public function all(array $columns = ['*'], int $startTime = null, int $endTime = null): AwsCloudWatchLogsCollection
     {
         $this->columns = $columns;
 
         $startTime ??= now()->startOfDay()->timestamp * 1000;
         $endTime ??= now()->endOfDay()->timestamp * 1000;
 
-        return $this->getAll($startTime, $endTime, $startFromHead);
+        return $this->getAll($startTime, $endTime);
     }
 
     /**
      * Get All Logs.
      * @param int $startTime
      * @param int $endTime
-     * @param bool $startFromHead
      * @return AwsCloudWatchLogsCollection
      */
-    private function getAll(int $startTime, int $endTime, bool $startFromHead): AwsCloudWatchLogsCollection
+    private function getAll(int $startTime, int $endTime): AwsCloudWatchLogsCollection
     {
-        $iterator = $this->retrieveLogs($startTime, $endTime, $startFromHead);
+        $iterator = $this->retrieveLogs($startTime, $endTime);
 
         $results = [];
-        foreach ($iterator as $item) {
-
-            $model = $this->newModelInstance(
+        foreach ($iterator as $index => $item) {
+            $results[$index] = $this->newModelInstance(
                 (new Analyzer($item))->beautifyLog($this->columns)
             );
-
-            $results[] = $model;
         }
 
         $collection = $this->model->newCollection($results);
@@ -358,17 +356,12 @@ class Builder
     /**
      * @param int $startTime
      * @param int $endTime
-     * @param bool $startFromHead
      * @return array
      */
-    private function retrieveLogs(int $startTime, int $endTime, bool $startFromHead): array
+    private function retrieveLogs(int $startTime, int $endTime): array
     {
         if (!$this->useCloudWatchLogsInsight) {
-            return $this->client->getLogEvents($startTime, $endTime, $startFromHead);
-        }
-
-        if (!empty ($columns)) {
-            $this->columns = $columns;
+            return $this->client->getLogEvents($startTime, $endTime, $this->startFromHead);
         }
 
         $queryId = $this->cloudWatchLogsInsightQueryId
