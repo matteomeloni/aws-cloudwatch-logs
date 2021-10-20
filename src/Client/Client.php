@@ -112,6 +112,20 @@ class Client
     }
 
     /**
+     * Returns a list of CloudWatch Logs Insights queries that are scheduled, executing, or have been executed recently in this account.
+     *
+     * @return array
+     */
+    public function describeQueries(): array
+    {
+        $queries = $this->client->describeQueries([
+            'logGroupName' => $this->logGroupName,
+        ])->toArray();
+
+        return $queries['queries'];
+    }
+
+    /**
      * Retrieves all the fields and values of a single log event
      *
      * @param string $ptr

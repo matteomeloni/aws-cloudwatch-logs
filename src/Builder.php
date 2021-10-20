@@ -2,6 +2,7 @@
 
 namespace Matteomeloni\AwsCloudwatchLogs;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
 use Matteomeloni\AwsCloudwatchLogs\Client\Client;
@@ -495,5 +496,19 @@ class Builder
         ];
 
         return (new QueryBuilder($this->model, $properties))->raw();
+    }
+
+    /**
+     * Returns a list of CloudWatch Logs Insights queries.
+     *
+     * @return AwsCloudWatchLastQueriesCollection
+     */
+    public function getLastQueries(): AwsCloudWatchLastQueriesCollection
+    {
+        $queries = new AwsCloudWatchLastQueriesCollection(
+            $this->client->describeQueries()
+        );
+
+        return $queries->parsed();
     }
 }
