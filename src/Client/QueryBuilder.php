@@ -94,7 +94,7 @@ class QueryBuilder
             $this->fields[] = '@ingestionTime';
         }
 
-        return "| fields " . implode(',', $this->fields);
+        return "fields " . implode(',', $this->fields);
 
     }
 
