@@ -81,7 +81,6 @@ class QueryBuilder
      */
     private function parseFields(): string
     {
-
         if(in_array('*', $this->fields)) {
             return "fields @timestamp, @ingestionTime, @message";
         }
@@ -95,7 +94,6 @@ class QueryBuilder
         }
 
         return "fields " . implode(',', $this->fields);
-
     }
 
     /**
