@@ -9,42 +9,45 @@ class SequenceToken
     /**
      * @var CloudWatchLogsClient
      */
-    private $client;
+    private CloudWatchLogsClient $client;
 
     /**
      * @var array
      */
-    private $info;
+    private array $info;
 
     /**
      * The name of the log group.
      *
      * @var string
      */
-    private $logGroupName;
+    private string $logGroupName;
 
     /**
      * The name of the log stream.
      *
      * @var string;
      */
-    private $logStreamName;
+    private string $logStreamName;
 
     /**
+     * Create a nwe Sequence Token Instance.
+     *
      * @param CloudWatchLogsClient $client
-     * @param $logGroupName
-     * @param $logStreamName
+     * @param string $logGroupName
+     * @param string $logStreamName
      */
-    public function __construct(CloudWatchLogsClient $client, $logGroupName, $logStreamName)
+    public function __construct(CloudWatchLogsClient $client, string $logGroupName, string $logStreamName)
     {
         $this->client = $client;
         $this->logGroupName = $logGroupName;
         $this->logStreamName = $logStreamName;
-
         $this->info = $this->describeLogEvents();
     }
 
     /**
+     * Check if next sequence token is required.
+     *
      * @return bool
      */
     public function nextSequenceTokenIsRequired(): bool
@@ -53,6 +56,8 @@ class SequenceToken
     }
 
     /**
+     * Return the next sequence token.
+     *
      * @return string|null
      */
     public function retrieveNextSequenceToken(): ?string
@@ -61,6 +66,10 @@ class SequenceToken
     }
 
     /**
+     * Lists the log streams for the specified log group.
+     * You can list all the log streams or filter the results by prefix.
+     * You can also control how the results are ordered.
+     *
      * @return array
      */
     private function describeLogEvents(): array
