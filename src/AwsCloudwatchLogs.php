@@ -202,6 +202,6 @@ abstract class AwsCloudwatchLogs
      */
     public function __set(string $key, $value)
     {
-       $this->attributes[$key] = $value;
+        $this->attributes[$key] = $value;
     }
 }
