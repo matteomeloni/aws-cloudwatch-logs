@@ -3,6 +3,7 @@
 namespace Matteomeloni\AwsCloudwatchLogs\Client;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
+use Illuminate\Support\Str;
 
 class Client
 {
@@ -52,13 +53,14 @@ class Client
      * Lists log events from the specified log stream.
      * You can list all the log events or filter using a time range.
      *
-     * @param int $startTime
-     * @param int $endTime
+     * @param array $timeRange
      * @param bool $startFromHead
      * @return array
      */
-    public function getLogEvents(int $startTime, int $endTime, bool $startFromHead): array
+    public function getLogEvents(array $timeRange, bool $startFromHead): array
     {
+        [$startTime, $endTime] = $timeRange;
+
         $logs = $this->client->getLogEvents([
             'logGroupName' => $this->logGroupName,
             'logStreamName' => $this->logStreamName,
@@ -74,13 +76,14 @@ class Client
      * Schedules a query of a log group using CloudWatch Logs Insights.
      * You specify the log group and time range to query and the query string to use.
      *
+     * @param array $timeRange
      * @param string $query
-     * @param int $startTime
-     * @param int $endTime
      * @return string|null
      */
-    public function startQuery(string $query, int $startTime, int $endTime): ?string
+    public function startQuery(array $timeRange, string $query): ?string
     {
+        [$startTime, $endTime] = $timeRange;
+
         $logs = $this->client->startQuery([
             'logGroupName' => $this->logGroupName,
             'logStreamName' => $this->logStreamName,
@@ -106,10 +109,19 @@ class Client
             'queryId' => $queryId
         ])->toArray();
 
+        $result = collect($logs['results'])
+            ->map(function ($log) {
+                return (collect($log))->mapWithKeys(function ($item) {
+                    $field = Str::replace('@', '', $item['field']);
+                    $value = $item['value'];
+                    return [$field => $value];
+                });
+            })->toArray();
+
         return [
             'queryId' => $queryId,
             'status' => $logs['status'],
-            'results' => $logs['results']
+            'results' => $result
         ];
     }
 
