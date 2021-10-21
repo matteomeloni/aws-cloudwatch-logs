@@ -86,6 +86,7 @@ class Builder
 
     /**
      * Schedules a query of a log group using CloudWatch Logs Insights.
+     * If $queryId is not null, then retrieve a scheduled query.
      *
      * @param null $queryId
      * @return Builder
