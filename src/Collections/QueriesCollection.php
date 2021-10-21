@@ -1,12 +1,12 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs;
+namespace Matteomeloni\AwsCloudwatchLogs\Collections;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class AwsCloudWatchLastQueriesCollection extends Collection
+class QueriesCollection extends Collection
 {
     public function __construct($items = [])
     {
@@ -14,9 +14,9 @@ class AwsCloudWatchLastQueriesCollection extends Collection
     }
 
     /**
-     * @return AwsCloudWatchLastQueriesCollection
+     * @return QueriesCollection
      */
-    public function parsed(): AwsCloudWatchLastQueriesCollection
+    public function parsed(): QueriesCollection
     {
         return $this->map(function ($query) {
             return [
@@ -29,34 +29,34 @@ class AwsCloudWatchLastQueriesCollection extends Collection
     }
 
     /**
-     * @return AwsCloudWatchLastQueriesCollection
+     * @return QueriesCollection
      */
-    public function completed(): AwsCloudWatchLastQueriesCollection
+    public function completed(): QueriesCollection
     {
         return $this->addfilter('complete');
     }
 
     /**
-     * @return AwsCloudWatchLastQueriesCollection
+     * @return QueriesCollection
      */
-    public function scheduled(): AwsCloudWatchLastQueriesCollection
+    public function scheduled(): QueriesCollection
     {
         return $this->addfilter('scheduled');
     }
 
     /**
-     * @return AwsCloudWatchLastQueriesCollection
+     * @return QueriesCollection
      */
-    public function running(): AwsCloudWatchLastQueriesCollection
+    public function running(): QueriesCollection
     {
         return $this->addfilter('running');
     }
 
     /**
      * @param $filter
-     * @return AwsCloudWatchLastQueriesCollection
+     * @return QueriesCollection
      */
-    private function addfilter($filter): AwsCloudWatchLastQueriesCollection
+    private function addfilter($filter): QueriesCollection
     {
         return $this->parsed()->where('status', $filter);
     }

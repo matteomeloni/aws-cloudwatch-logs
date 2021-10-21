@@ -5,14 +5,16 @@ namespace Matteomeloni\AwsCloudwatchLogs;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
 use Matteomeloni\AwsCloudwatchLogs\Client\Client;
 use Matteomeloni\AwsCloudwatchLogs\Client\QueryBuilder;
+use Matteomeloni\AwsCloudwatchLogs\Collections\QueriesCollection;
+use Matteomeloni\AwsCloudwatchLogs\Collections\LogsCollection;
 use Matteomeloni\AwsCloudwatchLogs\Exceptions\LogNotFoundException;
 
 class Builder
 {
     /**
-     * @var AwsCloudwatchLogs
+     * @var CloudWatchLogs
      */
-    protected AwsCloudwatchLogs $model;
+    protected CloudWatchLogs $model;
 
     /**
      * @var Client
@@ -62,9 +64,9 @@ class Builder
     /**
      * Create new Aws CloudWatch Logs instance.
      *
-     * @param AwsCloudwatchLogs $model
+     * @param CloudWatchLogs $model
      */
-    public function __construct(AwsCloudwatchLogs $model)
+    public function __construct(CloudWatchLogs $model)
     {
         $this->model = $model;
 
@@ -324,9 +326,9 @@ class Builder
      * Get all the models from the AWS CloudWatch Logs.
      *
      * @param array $columns
-     * @return AwsCloudWatchLogsCollection
+     * @return LogsCollection
      */
-    public function get(array $columns = ['*']): AwsCloudWatchLogsCollection
+    public function get(array $columns = ['*']): LogsCollection
     {
         return $this->all($columns);
     }
@@ -335,9 +337,9 @@ class Builder
      * Get all the models from the AWS CloudWatch Logs.
      *
      * @param array $columns
-     * @return AwsCloudWatchLogsCollection
+     * @return LogsCollection
      */
-    public function all(array $columns = ['*']): AwsCloudWatchLogsCollection
+    public function all(array $columns = ['*']): LogsCollection
     {
         $this->columns = $columns;
 
@@ -345,11 +347,11 @@ class Builder
     }
 
     /**
-     * Get All Logs and make AwsCloudWatchLogsCollection.
+     * Get All Logs and make CloudWatchLogsCollection.
      *
-     * @return AwsCloudWatchLogsCollection
+     * @return LogsCollection
      */
-    private function getAll(): AwsCloudWatchLogsCollection
+    private function getAll(): LogsCollection
     {
         $iterator = $this->retrieveLogs();
 
@@ -363,8 +365,8 @@ class Builder
         $collection = $this->model->newCollection($results);
 
         if ($this->useCloudWatchLogsInsight) {
-            $collection->setCloudWatchLogsInsightQueryId($this->cloudWatchLogsInsightQueryId);
-            $collection->setCloudWatchLogsInsightQueryStatus($this->cloudWatchLogsInsightQueryStatus);
+            $collection->setQueryId($this->cloudWatchLogsInsightQueryId);
+            $collection->setQueryStatus($this->cloudWatchLogsInsightQueryStatus);
         }
 
         return $collection;
@@ -399,9 +401,9 @@ class Builder
      *
      * @param string $ptr
      * @param array $columns
-     * @return AwsCloudwatchLogs|null
+     * @return CloudWatchLogs|null
      */
-    public function find(string $ptr, array $columns = ['*']): ?AwsCloudwatchLogs
+    public function find(string $ptr, array $columns = ['*']): ?CloudWatchLogs
     {
         $result = $this->client->getLogRecord($ptr);
 
@@ -419,9 +421,9 @@ class Builder
      *
      * @param array $ids
      * @param array $columns
-     * @return AwsCloudWatchLogsCollection
+     * @return LogsCollection
      */
-    public function findMany(array $ids, array $columns = ['*']): AwsCloudWatchLogsCollection
+    public function findMany(array $ids, array $columns = ['*']): LogsCollection
     {
         $results = [];
 
@@ -437,9 +439,9 @@ class Builder
      *
      * @param string $ptr
      * @param array $columns
-     * @return AwsCloudwatchLogs
+     * @return CloudWatchLogs
      */
-    public function findOrFail(string $ptr, array $columns = ['*']): AwsCloudwatchLogs
+    public function findOrFail(string $ptr, array $columns = ['*']): CloudWatchLogs
     {
         $result = $this->find($ptr, $columns);
 
@@ -456,13 +458,13 @@ class Builder
      * Save a new log and return the instance.
      *
      * @param array $attributes
-     * @return AwsCloudwatchLogs
+     * @return CloudWatchLogs
      */
-    public function create(array $attributes = []): AwsCloudwatchLogs
+    public function create(array $attributes = []): CloudWatchLogs
     {
         $newModelInstance = $this->newModelInstance($attributes);
 
-        return tap($newModelInstance, function (AwsCloudwatchLogs $instance) {
+        return tap($newModelInstance, function (CloudWatchLogs $instance) {
             $instance->save();
         });
     }
@@ -482,9 +484,9 @@ class Builder
      * Create a new instance of the model being queried.
      *
      * @param array $attributes
-     * @return AwsCloudwatchLogs
+     * @return CloudWatchLogs
      */
-    private function newModelInstance(array $attributes = []): AwsCloudwatchLogs
+    private function newModelInstance(array $attributes = []): CloudWatchLogs
     {
         return $this->model->newInstance($attributes);
     }
@@ -536,11 +538,11 @@ class Builder
     /**
      * Returns a list of CloudWatch Logs Insights queries.
      *
-     * @return AwsCloudWatchLastQueriesCollection
+     * @return QueriesCollection
      */
-    public function queries(): AwsCloudWatchLastQueriesCollection
+    public function queries(): QueriesCollection
     {
-        $queries = new AwsCloudWatchLastQueriesCollection(
+        $queries = new QueriesCollection(
             $this->client->describeQueries()
         );
 

@@ -4,7 +4,7 @@ namespace Matteomeloni\AwsCloudwatchLogs\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class AwsCloudwatchLogs extends Facade
+class CloudwatchLogs extends Facade
 {
     /**
      * Get the registered name of the component.
