@@ -27,4 +27,37 @@ class AwsCloudWatchLastQueriesCollection extends Collection
             ];
         })->sortByDesc('createTime');
     }
+
+    /**
+     * @return AwsCloudWatchLastQueriesCollection
+     */
+    public function completed(): AwsCloudWatchLastQueriesCollection
+    {
+        return $this->addfilter('complete');
+    }
+
+    /**
+     * @return AwsCloudWatchLastQueriesCollection
+     */
+    public function scheduled(): AwsCloudWatchLastQueriesCollection
+    {
+        return $this->addfilter('scheduled');
+    }
+
+    /**
+     * @return AwsCloudWatchLastQueriesCollection
+     */
+    public function running(): AwsCloudWatchLastQueriesCollection
+    {
+        return $this->addfilter('running');
+    }
+
+    /**
+     * @param $filter
+     * @return AwsCloudWatchLastQueriesCollection
+     */
+    private function addfilter($filter): AwsCloudWatchLastQueriesCollection
+    {
+        return $this->parsed()->where('status', $filter);
+    }
 }

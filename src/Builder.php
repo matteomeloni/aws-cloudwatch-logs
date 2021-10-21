@@ -538,7 +538,7 @@ class Builder
      *
      * @return AwsCloudWatchLastQueriesCollection
      */
-    public function getLastQueries(): AwsCloudWatchLastQueriesCollection
+    public function queries(): AwsCloudWatchLastQueriesCollection
     {
         $queries = new AwsCloudWatchLastQueriesCollection(
             $this->client->describeQueries()
