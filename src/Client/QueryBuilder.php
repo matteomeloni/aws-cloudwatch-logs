@@ -39,6 +39,8 @@ class QueryBuilder
     private string $query = '';
 
     /**
+     * Create new Query Builder instance.
+     *
      * @param AwsCloudwatchLogs $model
      * @param array $properties
      */
@@ -52,6 +54,8 @@ class QueryBuilder
     }
 
     /**
+     * Return sql query string.
+     *
      * @return string
      */
     public function raw(): string

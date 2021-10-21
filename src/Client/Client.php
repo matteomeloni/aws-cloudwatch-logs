@@ -33,6 +33,8 @@ class Client
     private string $logStreamName;
 
     /**
+     * Create a new Client instance.
+     *
      * @param $logGroupName
      * @param $logStreamName
      */
@@ -198,7 +200,7 @@ class Client
      */
     private function prepareData($data): string
     {
-        if(is_array($data)) {
+        if (is_array($data)) {
             $data = json_encode($data);
         }
 
