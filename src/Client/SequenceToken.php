@@ -31,7 +31,7 @@ class SequenceToken
     private string $logStreamName;
 
     /**
-     * Create a nwe Sequence Token Instance.
+     * Create a new Sequence Token Instance.
      *
      * @param CloudWatchLogsClient $client
      * @param string $logGroupName
