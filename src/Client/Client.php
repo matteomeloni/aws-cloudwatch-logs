@@ -13,13 +13,6 @@ class Client
     private CloudWatchLogsClient $client;
 
     /**
-     * The sequence token obtained from the response of the previous PutLogEvents call.
-     *
-     * @var SequenceToken
-     */
-    private SequenceToken $nextSequenceToken;
-
-    /**
      * The name of the log group.
      *
      * @var string
@@ -45,8 +38,6 @@ class Client
         $this->logStreamName = $logStreamName;
 
         $this->client = $this->connect();
-
-        $this->nextSequenceToken = new SequenceToken($this->client, $this->logGroupName, $this->logStreamName);
     }
 
     /**
@@ -171,6 +162,8 @@ class Client
      */
     public function putLogEvents(array $data = []): bool
     {
+        $nextSequenceToken = new SequenceToken($this->client, $this->logGroupName, $this->logStreamName);
+
         $options = [
             'logGroupName' => $this->logGroupName,
             'logStreamName' => $this->logStreamName,
@@ -180,8 +173,8 @@ class Client
             ]]
         ];
 
-        if ($this->nextSequenceToken->nextSequenceTokenIsRequired()) {
-            $options['sequenceToken'] = $this->nextSequenceToken->retrieveNextSequenceToken();
+        if ($nextSequenceToken->nextSequenceTokenIsRequired()) {
+            $options['sequenceToken'] = $nextSequenceToken->retrieveNextSequenceToken();
         }
 
         $result = $this->client
