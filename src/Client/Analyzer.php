@@ -12,6 +12,8 @@ class Analyzer
     private array $log;
 
     /**
+     * Create a new Analyzer Instance.
+     *
      * @param $log
      */
     public function __construct($log)
@@ -20,6 +22,8 @@ class Analyzer
     }
 
     /**
+     * Return array that contains the log parsed and beautified.
+     *
      * @param array $columns
      * @return array
      */
@@ -29,7 +33,7 @@ class Analyzer
             ? $this->messageAnalyzer($this->log['message'])
             : $this->log;
 
-        if (! in_array('*', $columns)) {
+        if (!in_array('*', $columns)) {
             $attributes = collect($attributes)
                 ->mapWithKeys(function ($value, $field) use ($columns) {
                     return in_array($field, $columns)
@@ -46,6 +50,8 @@ class Analyzer
     }
 
     /**
+     * Parse the content of the message attribute.
+     *
      * @param $message
      * @return array
      */
@@ -61,6 +67,8 @@ class Analyzer
     }
 
     /**
+     * Check if the content of the attribute is a json.
+     *
      * @param $message
      * @return bool
      */
@@ -72,6 +80,7 @@ class Analyzer
     }
 
     /**
+     * Return the parsed datetime attribute.
      * @param $timestamp
      * @return string|null
      */
