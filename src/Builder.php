@@ -60,6 +60,8 @@ class Builder
     private ?string $cloudWatchLogsInsightQueryStatus;
 
     /**
+     * Create new Aws CloudWatch Logs instance.
+     *
      * @param AwsCloudwatchLogs $model
      */
     public function __construct(AwsCloudwatchLogs $model)
@@ -342,7 +344,7 @@ class Builder
     }
 
     /**
-     * Get All Logs.
+     * Get All Logs and make AwsCloudWatchLogsCollection.
      *
      * @return AwsCloudWatchLogsCollection
      */
@@ -368,6 +370,8 @@ class Builder
     }
 
     /**
+     * Retrieve logs from Aws CloudWatch.
+     *
      * @return array
      */
     private function retrieveLogs(): array
@@ -485,6 +489,8 @@ class Builder
     }
 
     /**
+     * Build sql query string.
+     *
      * @return string
      */
     private function buildQuery(): string
@@ -505,6 +511,9 @@ class Builder
     }
 
     /**
+     * Extract Time Range for get events log from AWS CloudWatch Logs.
+     * Default is current day.
+     *
      * @return array
      */
     private function extractTimeRange(): array
