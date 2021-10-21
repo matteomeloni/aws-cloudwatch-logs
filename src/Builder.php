@@ -2,7 +2,6 @@
 
 namespace Matteomeloni\AwsCloudwatchLogs;
 
-use Illuminate\Support\Str;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
 use Matteomeloni\AwsCloudwatchLogs\Client\Client;
 use Matteomeloni\AwsCloudwatchLogs\Client\QueryBuilder;
@@ -46,16 +45,6 @@ class Builder
     protected bool $startFromHead = true;
 
     /**
-     * @var int
-     */
-    private int $startTime;
-
-    /**
-     * @var int
-     */
-    private int $endTime;
-
-    /**
      * @var bool
      */
     private bool $useCloudWatchLogsInsight = false;
@@ -76,8 +65,6 @@ class Builder
     public function __construct(AwsCloudwatchLogs $model)
     {
         $this->model = $model;
-        $this->startTime = now()->startOfDay()->timestamp * 1000;
-        $this->endTime = now()->endOfDay()->timestamp * 1000;
 
         $this->client = new Client($this->model->getLogGroupName(), $this->model->getLogStreamName());
     }
@@ -385,29 +372,21 @@ class Builder
      */
     private function retrieveLogs(): array
     {
-        if($timeRange = $this->extractTimeRange()) {
-            [$this->startTime, $this->endTime] = $timeRange;
-        }
+        $timeRange = $this->extractTimeRange();
 
         if (!$this->useCloudWatchLogsInsight) {
-            return $this->client->getLogEvents($this->startTime, $this->endTime, $this->startFromHead);
+            return $this->client->getLogEvents($timeRange, $this->startFromHead);
         }
 
         $queryId = $this->cloudWatchLogsInsightQueryId
-            ?: $this->client->startQuery($this->buildQuery(), $this->startTime, $this->endTime);
+            ?: $this->client->startQuery($timeRange, $this->buildQuery());
 
         $result = $this->client->getQueryResults($queryId);
 
         $this->cloudWatchLogsInsightQueryId = $result['queryId'];
         $this->cloudWatchLogsInsightQueryStatus = $result['status'];
 
-        return (collect($result['results']))->map(function ($log) {
-            return (collect($log))->mapWithKeys(function ($item) {
-                $field = Str::replace('@', '', $item['field']);
-                $value = $item['value'];
-                return [$field => $value];
-            });
-        })->toArray();
+        return $result['results'];
     }
 
     /**
@@ -526,13 +505,22 @@ class Builder
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    private function extractTimeRange(): ?array
+    private function extractTimeRange(): array
     {
-        return collect($this->wheres)->filter(function ($where) {
+        $range = collect($this->wheres)->filter(function ($where) {
             return $where['column'] === 'timestamp';
-        })->first()['value'];
+        })->first()['value'] ?? null;
+
+        if($range === null) {
+            return [
+                now()->startOfDay()->timestamp * 1000,
+                now()->endOfDay()->timestamp * 1000
+            ];
+        }
+
+        return $range;
     }
 
     /**
