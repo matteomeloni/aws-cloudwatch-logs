@@ -23,6 +23,8 @@ abstract class AwsCloudwatchLogs
     protected string $logStreamName;
 
     /**
+     * The model's attributes.
+     *
      * @var array
      */
     private array $attributes = [];
@@ -85,6 +87,7 @@ abstract class AwsCloudwatchLogs
 
     /**
      * Save the log to Aws CloudWatch Logs.
+     *
      * @return bool
      */
     public function save(): bool
@@ -126,6 +129,7 @@ abstract class AwsCloudwatchLogs
 
     /**
      * Create a new Query Builder for the model.
+     *
      * @return Builder
      */
     public function builder(): Builder
@@ -134,6 +138,8 @@ abstract class AwsCloudwatchLogs
     }
 
     /**
+     * Create a new AwsCloudWatchLogsCollection Instance.
+     *
      * @param array $models
      * @return AwsCloudWatchLogsCollection
      */
