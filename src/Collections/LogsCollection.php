@@ -1,10 +1,10 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs;
+namespace Matteomeloni\AwsCloudwatchLogs\Collections;
 
 use Illuminate\Support\Collection;
 
-class AwsCloudWatchLogsCollection extends Collection
+class LogsCollection extends Collection
 {
     /**
      * @var string|null
@@ -24,7 +24,7 @@ class AwsCloudWatchLogsCollection extends Collection
     /**
      * @return string
      */
-    public function getCloudWatchLogsInsightQueryStatus(): string
+    public function getQueryStatus(): string
     {
         return $this->cloudWatchLogsInsightQueryStatus;
     }
@@ -32,16 +32,16 @@ class AwsCloudWatchLogsCollection extends Collection
     /**
      * @return string
      */
-    public function getCloudWatchLogsInsightQueryId(): string
+    public function getQueryId(): string
     {
         return $this->cloudWatchLogsInsightQueryId;
     }
 
     /**
      * @param string|null $cloudWatchLogsInsightQueryStatus
-     * @return AwsCloudWatchLogsCollection
+     * @return LogsCollection
      */
-    public function setCloudWatchLogsInsightQueryStatus(string $cloudWatchLogsInsightQueryStatus = null): AwsCloudWatchLogsCollection
+    public function setQueryStatus(string $cloudWatchLogsInsightQueryStatus = null): LogsCollection
     {
         $this->cloudWatchLogsInsightQueryStatus = $cloudWatchLogsInsightQueryStatus;
 
@@ -50,9 +50,9 @@ class AwsCloudWatchLogsCollection extends Collection
 
     /**
      * @param string|null $cloudWatchLogsInsightQueryId
-     * @return AwsCloudWatchLogsCollection
+     * @return LogsCollection
      */
-    public function setCloudWatchLogsInsightQueryId(string $cloudWatchLogsInsightQueryId = null): AwsCloudWatchLogsCollection
+    public function setQueryId(string $cloudWatchLogsInsightQueryId = null): LogsCollection
     {
         $this->cloudWatchLogsInsightQueryId = $cloudWatchLogsInsightQueryId;
 

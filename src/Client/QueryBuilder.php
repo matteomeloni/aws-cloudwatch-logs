@@ -4,14 +4,14 @@ namespace Matteomeloni\AwsCloudwatchLogs\Client;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Matteomeloni\AwsCloudwatchLogs\AwsCloudwatchLogs;
+use Matteomeloni\AwsCloudwatchLogs\CloudWatchLogs;
 
 class QueryBuilder
 {
     /**
-     * @var AwsCloudwatchLogs
+     * @var CloudWatchLogs
      */
-    private AwsCloudwatchLogs $model;
+    private CloudWatchLogs $model;
 
     /**
      * @var array
@@ -41,10 +41,10 @@ class QueryBuilder
     /**
      * Create new Query Builder instance.
      *
-     * @param AwsCloudwatchLogs $model
+     * @param CloudWatchLogs $model
      * @param array $properties
      */
-    public function __construct(AwsCloudwatchLogs $model, array $properties = [])
+    public function __construct(CloudWatchLogs $model, array $properties = [])
     {
         $this->model = $model;
         $this->fields = $properties['select'] ?? [];

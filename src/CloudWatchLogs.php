@@ -3,8 +3,9 @@
 namespace Matteomeloni\AwsCloudwatchLogs;
 
 use Illuminate\Support\Traits\ForwardsCalls;
+use Matteomeloni\AwsCloudwatchLogs\Collections\LogsCollection;
 
-abstract class AwsCloudwatchLogs
+abstract class CloudWatchLogs
 {
     use ForwardsCalls;
 
@@ -65,7 +66,7 @@ abstract class AwsCloudwatchLogs
      * @param string $logGroupName
      * @return $this
      */
-    public function setLogGroupName(string $logGroupName): AwsCloudwatchLogs
+    public function setLogGroupName(string $logGroupName): CloudWatchLogs
     {
         $this->logGroupName = $logGroupName;
 
@@ -78,7 +79,7 @@ abstract class AwsCloudwatchLogs
      * @param string $logStreamName
      * @return $this
      */
-    public function setLogStreamName(string $logStreamName): AwsCloudwatchLogs
+    public function setLogStreamName(string $logStreamName): CloudWatchLogs
     {
         $this->logStreamName = $logStreamName;
 
@@ -104,7 +105,7 @@ abstract class AwsCloudwatchLogs
      * @return $this
      *
      */
-    public function fill(array $attributes): AwsCloudwatchLogs
+    public function fill(array $attributes): CloudWatchLogs
     {
         $this->attributes = $attributes;
 
@@ -117,7 +118,7 @@ abstract class AwsCloudwatchLogs
      * @param array $attributes
      * @return static
      */
-    public function newInstance(array $attributes = []): AwsCloudwatchLogs
+    public function newInstance(array $attributes = []): CloudWatchLogs
     {
         $model = new static($attributes);
 
@@ -141,11 +142,11 @@ abstract class AwsCloudwatchLogs
      * Create a new AwsCloudWatchLogsCollection Instance.
      *
      * @param array $models
-     * @return AwsCloudWatchLogsCollection
+     * @return LogsCollection
      */
-    public function newCollection(array $models = []): AwsCloudWatchLogsCollection
+    public function newCollection(array $models = []): LogsCollection
     {
-        return new AwsCloudWatchLogsCollection($models);
+        return new LogsCollection($models);
     }
 
     /**
