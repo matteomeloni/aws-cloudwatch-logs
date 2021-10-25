@@ -38,7 +38,7 @@ class Analyzer
                 ->mapWithKeys(function ($value, $field) use ($columns) {
                     return in_array($field, $columns)
                         ? [$field => $value]
-                        : null;
+                        : [];
                 })->toArray();
         }
 
