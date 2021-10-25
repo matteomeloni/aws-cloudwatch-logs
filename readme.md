@@ -183,7 +183,7 @@ If you discover any security related issues, please email author@email.com inste
 
 ## Credits
 
-- [Author Name][link-author]
+- [Matteo Meloni][link-author]
 - [All Contributors][link-contributors]
 
 ## License

@@ -4,9 +4,9 @@ namespace Matteomeloni\AwsCloudwatchLogs\Tests\Unit;
 
 use Carbon\Carbon;
 use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
-use Matteomeloni\AwsCloudwatchLogs\Tests\PackageTestCase;
+use Matteomeloni\AwsCloudwatchLogs\Tests\TestCase;
 
-class AnalyzerTest extends PackageTestCase
+class AnalyzerTest extends TestCase
 {
     private array $rawLog = [];
     private int $timestamp = 0;

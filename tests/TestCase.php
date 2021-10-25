@@ -3,9 +3,8 @@
 namespace Matteomeloni\AwsCloudwatchLogs\Tests;
 
 use Matteomeloni\AwsCloudwatchLogs\AwsCloudwatchLogsServiceProvider;
-use Orchestra\Testbench\TestCase;
 
-class PackageTestCase extends TestCase
+class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected function getPackageProviders($app): array
     {
