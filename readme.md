@@ -189,7 +189,7 @@ If you discover any security related issues, please email author@email.com inste
 
 ## License
 
-MIT. Please see the [license file](license.md) for more information.
+The MIT License (MIT). Please see [License File](license.md) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/matteomeloni/aws-cloudwatch-logs.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/matteomeloni/aws-cloudwatch-logs.svg?style=flat-square
