@@ -24,9 +24,14 @@
             "Matteomeloni\\AwsCloudwatchLogs\\": "src/"
         }
     },
+    "scripts": {
+        "test": [
+            "php vendor/bin/phpunit"
+        ]
+    },
     "autoload-dev": {
         "psr-4": {
-            "Matteomeloni\\AwsCloudwatchLogs\\Tests\\": "tests"
+            "Matteomeloni\\AwsCloudwatchLogs\\Tests\\": "tests/"
         }
     },
     "extra": {
