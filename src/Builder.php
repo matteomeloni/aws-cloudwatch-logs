@@ -278,7 +278,7 @@ class Builder
     /**
      * Retrieve the "count" result of the query.
      *
-     * @return int|Aggregates
+     * @return float|int|Aggregates
      */
     public function count()
     {
@@ -289,7 +289,7 @@ class Builder
      * Retrieve the minimum value of a given column.
      *
      * @param string $column
-     * @return int|Aggregates
+     * @return float|int|Aggregates
      */
     public function min(string $column)
     {
@@ -300,7 +300,7 @@ class Builder
      * Retrieve the maximum value of a given column.
      *
      * @param string $column
-     * @return int|Aggregates
+     * @return float|int|Aggregates
      */
     public function max(string $column)
     {
@@ -311,11 +311,33 @@ class Builder
      * Retrieve the sum of the value of a given column.
      *
      * @param string $column
-     * @return int|Aggregates
+     * @return float|int|Aggregates
      */
     public function sum(string $column)
     {
         return $this->aggregate(__FUNCTION__, $column);
+    }
+
+    /**
+     * Retrieve the average of the values of a given column.
+     *
+     * @param string $column
+     * @return float|Aggregates
+     */
+    public function avg(string $column)
+    {
+        return $this->aggregate(__FUNCTION__, $column);
+    }
+
+    /**
+     * Alias for the "avg" method.
+     *
+     * @param string $column
+     * @return float|int|Aggregates
+     */
+    public function average(string $column)
+    {
+        return $this->avg($column);
     }
 
     /**
