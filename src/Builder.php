@@ -620,10 +620,10 @@ class Builder
     private function extractTimeRange(): array
     {
         $range = collect($this->wheres)->filter(function ($where) {
-            return $where['column'] === 'timestamp';
-        })->first()['value'] ?? null;
+                return $where['column'] === 'timestamp';
+            })->first()['value'] ?? null;
 
-        if($range === null) {
+        if ($range === null) {
             return [
                 now()->startOfDay()->timestamp * 1000,
                 now()->endOfDay()->timestamp * 1000

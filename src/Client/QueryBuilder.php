@@ -69,7 +69,7 @@ class QueryBuilder
         $this->query .= $this->parseStats();
         $this->query .= $this->parseSorts();
 
-        if($this->limit) {
+        if ($this->limit) {
             $this->query .= "| limit {$this->limit}";
         }
 
@@ -89,15 +89,15 @@ class QueryBuilder
      */
     private function parseFields(): string
     {
-        if(in_array('*', $this->fields)) {
+        if (in_array('*', $this->fields)) {
             return "fields @timestamp, @ingestionTime, @message";
         }
 
-        if(! Arr::exists($this->fields, '@timestamp')) {
+        if (!Arr::exists($this->fields, '@timestamp')) {
             $this->fields[] = '@timestamp';
         }
 
-        if(! Arr::exists($this->fields, '@ingestionTime')) {
+        if (!Arr::exists($this->fields, '@ingestionTime')) {
             $this->fields[] = '@ingestionTime';
         }
 
@@ -109,7 +109,7 @@ class QueryBuilder
      */
     private function parseWheres(): ?string
     {
-        if(empty($this->wheres)) {
+        if (empty($this->wheres)) {
             return null;
         }
 
@@ -157,7 +157,7 @@ class QueryBuilder
 
         $filter = "| stats ";
 //        if ($this->stats['function'] === 'count') {
-            $filter .= "{$this->stats['function']}({$this->stats['column']})";
+        $filter .= "{$this->stats['function']}({$this->stats['column']})";
 //        }
 
 //        if ($this->stats['function'] === 'min') {
@@ -172,7 +172,7 @@ class QueryBuilder
      */
     public function parseSorts(): ?string
     {
-        if(empty($this->sorts)) {
+        if (empty($this->sorts)) {
             return null;
         }
 

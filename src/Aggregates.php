@@ -58,7 +58,7 @@ class Aggregates
     {
         $rawFunction = array_key_first(Arr::first($logResult['results']));
 
-        return (string) Str::of($rawFunction)
+        return (string)Str::of($rawFunction)
             ->replaceMatches('/\(.+\)/', '');
     }
 }
