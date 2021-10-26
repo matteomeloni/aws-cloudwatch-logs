@@ -120,6 +120,27 @@ Log::whereNotNull('column')->get();
 Log::orWhereNotNull('column')->get();
 ```
 
+##### Aggregates
+
+This library also provides a variety of methods for retrieving aggregate values like `count`, `min`, `max`, `sum`, and `avg`. 
+
+You may call any of these methods after constructing your query:
+
+```php
+use App\Models\Log;
+
+$count = Log::query()
+    ->where('level_code', 500)
+    ->count();
+
+//Other types of aggregates
+Log::query()->min('level_code');
+Log::query()->max('level_code');
+Log::query()->sum('level_code');
+Log::query()->avg('level_code');
+Log::query()->average('level_code'); //Alias for the "avg" method
+```
+
 ### Retrieving Single Model
 
 In addition to retrieving all of the records matching a given query, you may also retrieve single records using the `find` or `first` methods.
