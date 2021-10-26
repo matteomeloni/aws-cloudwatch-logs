@@ -43,7 +43,7 @@ class Aggregates
             case 'count':
             case 'min':
             case 'max':
-                $this->value = $value;
+                $this->value = (int) $value;
                 break;
         }
     }
