@@ -26,7 +26,7 @@ class AwsCloudwatchLogsServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/aws-cloudwatch-logs.php', 'aws-cloudwatch-logs');
+        $this->mergeConfigFrom(__DIR__ . '/../config/aws-cloudwatch-logs.php', 'aws-cloudwatch-logs');
 
     }
 
@@ -39,7 +39,7 @@ class AwsCloudwatchLogsServiceProvider extends ServiceProvider
     {
         // Publishing the configuration file.
         $this->publishes([
-            __DIR__.'/../config/aws-cloudwatch-logs.php' => config_path('aws-cloudwatch-logs.php'),
+            __DIR__ . '/../config/aws-cloudwatch-logs.php' => config_path('aws-cloudwatch-logs.php'),
         ], 'aws-cloudwatch-logs.config');
     }
 }
