@@ -1,6 +1,6 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Collections;
+namespace Matteomeloni\CloudwatchLogs\Collections;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;

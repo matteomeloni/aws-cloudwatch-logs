@@ -1,10 +1,10 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs;
+namespace Matteomeloni\CloudwatchLogs;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Matteomeloni\AwsCloudwatchLogs\Traits\HasCloudWatchLogsInsight;
+use Matteomeloni\CloudwatchLogs\Traits\HasCloudWatchLogsInsight;
 
 class Aggregates
 {

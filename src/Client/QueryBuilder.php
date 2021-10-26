@@ -1,10 +1,10 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Client;
+namespace Matteomeloni\CloudwatchLogs\Client;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Matteomeloni\AwsCloudwatchLogs\CloudWatchLogs;
+use Matteomeloni\CloudwatchLogs\CloudWatchLogs;
 
 class QueryBuilder
 {

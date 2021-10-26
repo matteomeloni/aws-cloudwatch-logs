@@ -1,10 +1,10 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Tests\Unit;
+namespace Matteomeloni\CloudwatchLogs\Tests\Unit;
 
 use Carbon\Carbon;
-use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
-use Matteomeloni\AwsCloudwatchLogs\Tests\TestCase;
+use Matteomeloni\CloudwatchLogs\Client\Analyzer;
+use Matteomeloni\CloudwatchLogs\Tests\TestCase;
 
 class AnalyzerTest extends TestCase
 {

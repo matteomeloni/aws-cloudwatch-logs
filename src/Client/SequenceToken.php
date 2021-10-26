@@ -1,6 +1,6 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Client;
+namespace Matteomeloni\CloudwatchLogs\Client;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 

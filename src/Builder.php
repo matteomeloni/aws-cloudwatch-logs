@@ -1,13 +1,13 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs;
+namespace Matteomeloni\CloudwatchLogs;
 
-use Matteomeloni\AwsCloudwatchLogs\Client\Analyzer;
-use Matteomeloni\AwsCloudwatchLogs\Client\Client;
-use Matteomeloni\AwsCloudwatchLogs\Client\QueryBuilder;
-use Matteomeloni\AwsCloudwatchLogs\Collections\QueriesCollection;
-use Matteomeloni\AwsCloudwatchLogs\Collections\LogsCollection;
-use Matteomeloni\AwsCloudwatchLogs\Exceptions\LogNotFoundException;
+use Matteomeloni\CloudwatchLogs\Client\Analyzer;
+use Matteomeloni\CloudwatchLogs\Client\Client;
+use Matteomeloni\CloudwatchLogs\Client\QueryBuilder;
+use Matteomeloni\CloudwatchLogs\Collections\QueriesCollection;
+use Matteomeloni\CloudwatchLogs\Collections\LogsCollection;
+use Matteomeloni\CloudwatchLogs\Exceptions\LogNotFoundException;
 
 class Builder
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs;
+namespace Matteomeloni\CloudwatchLogs;
 
 use Illuminate\Support\Traits\ForwardsCalls;
-use Matteomeloni\AwsCloudwatchLogs\Collections\LogsCollection;
+use Matteomeloni\CloudwatchLogs\Collections\LogsCollection;
 
 abstract class CloudWatchLogs
 {

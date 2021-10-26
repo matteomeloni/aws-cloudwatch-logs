@@ -1,6 +1,6 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Exceptions;
+namespace Matteomeloni\CloudwatchLogs\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

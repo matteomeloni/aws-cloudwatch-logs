@@ -1,6 +1,6 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Facades;
+namespace Matteomeloni\CloudwatchLogs\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

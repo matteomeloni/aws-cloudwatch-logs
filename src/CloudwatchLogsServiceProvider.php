@@ -1,10 +1,10 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs;
+namespace Matteomeloni\CloudwatchLogs;
 
 use Illuminate\Support\ServiceProvider;
 
-class AwsCloudwatchLogsServiceProvider extends ServiceProvider
+class CloudwatchLogsServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.

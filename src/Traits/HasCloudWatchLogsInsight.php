@@ -1,8 +1,8 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Traits;
+namespace Matteomeloni\CloudwatchLogs\Traits;
 
-use Matteomeloni\AwsCloudwatchLogs\Collections\LogsCollection;
+use Matteomeloni\CloudwatchLogs\Collections\LogsCollection;
 
 trait HasCloudWatchLogsInsight
 {
@@ -15,11 +15,6 @@ trait HasCloudWatchLogsInsight
      * @var string|null
      */
     private ?string $cloudWatchLogsInsightQueryId;
-
-    public function __construct($items = [])
-    {
-        parent::__construct($items);
-    }
 
     /**
      * @return string

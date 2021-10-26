@@ -31,7 +31,7 @@ Update AWS CloudWatch Logs config in `config/aws-cloudwatch-logs.php`
 Extends your model with `Matteomeloni\AwsCloudwatchLogs\CloudWatchLogs`
 
 ```php
-use Matteomeloni\AwsCloudwatchLogs\CloudWatchLogs;
+use Matteomeloni\CloudwatchLogs\CloudWatchLogs;
 
 class Log extends CloudWatchLogs
 {

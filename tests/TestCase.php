@@ -1,14 +1,14 @@
 <?php
 
-namespace Matteomeloni\AwsCloudwatchLogs\Tests;
+namespace Matteomeloni\CloudwatchLogs\Tests;
 
-use Matteomeloni\AwsCloudwatchLogs\AwsCloudwatchLogsServiceProvider;
+use Matteomeloni\CloudwatchLogs\CloudwatchLogsServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected function getPackageProviders($app): array
     {
-        return [AwsCloudwatchLogsServiceProvider::class];
+        return [CloudwatchLogsServiceProvider::class];
     }
 
     public function createRawLog(int $dateTime): array

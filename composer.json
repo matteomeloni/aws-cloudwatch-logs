@@ -1,5 +1,5 @@
 {
-    "name": "matteomeloni/aws-cloudwatch-logs",
+    "name": "matteomeloni/cloudwatch-logs",
     "description": ":package_description",
     "license": "MIT",
     "authors": [
@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Matteomeloni\\AwsCloudwatchLogs\\": "src/"
+            "Matteomeloni\\CloudwatchLogs\\": "src/"
         }
     },
     "scripts": {
@@ -31,16 +31,16 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Matteomeloni\\AwsCloudwatchLogs\\Tests\\": "tests/"
+            "Matteomeloni\\CloudwatchLogs\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Matteomeloni\\AwsCloudwatchLogs\\AwsCloudwatchLogsServiceProvider"
+                "Matteomeloni\\CloudwatchLogs\\CloudwatchLogsServiceProvider"
             ],
             "aliases": {
-                "AwsCloudwatchLogs": "Matteomeloni\\AwsCloudwatchLogs\\Facades\\AwsCloudwatchLogs"
+                "CloudwatchLogs": "Matteomeloni\\CloudwatchLogs\\Facades\\CloudwatchLogs"
             }
         }
     }
