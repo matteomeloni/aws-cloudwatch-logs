@@ -37,11 +37,13 @@ class Aggregates
     private function parseResults($results)
     {
         $function = $this->getFunction(array_key_first($results));
+        $value = Arr::first($results);
 
         switch ($function) {
             case 'count':
             case 'min':
-                $this->value = (int)$results[$function];
+            case 'max':
+                $this->value = $value;
                 break;
         }
     }

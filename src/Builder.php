@@ -297,6 +297,17 @@ class Builder
     }
 
     /**
+     * Retrieve the maximum value of a given column.
+     *
+     * @param string $column
+     * @return int|Aggregates
+     */
+    public function max(string $column)
+    {
+        return $this->aggregate(__FUNCTION__, $column);
+    }
+
+    /**
      * Execute an aggregate function on the database.
      *
      * @param string $function
