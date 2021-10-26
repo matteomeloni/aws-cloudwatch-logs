@@ -23,6 +23,8 @@ class QueryBuilder
      */
     private array $wheres;
 
+    private array $stats;
+
     /**
      * @var array
      */
@@ -49,6 +51,7 @@ class QueryBuilder
         $this->model = $model;
         $this->fields = $properties['select'] ?? [];
         $this->wheres = $properties['wheres'] ?? [];
+        $this->stats = $properties['stats'] ?? [];
         $this->sorts = $properties['sorts'] ?? [];
         $this->limit = $properties['limit'] ?? null;
     }
@@ -63,6 +66,7 @@ class QueryBuilder
         $this->query .= $this->parseFields();
         $this->query .= $this->setLogStream();
         $this->query .= $this->parseWheres();
+        $this->query .= $this->parseStats();
         $this->query .= $this->parseSorts();
 
         if($this->limit) {
@@ -137,6 +141,23 @@ class QueryBuilder
             if (in_array($where['operator'], ['isempty', 'not isempty'])) {
                 $filter .= "{$where['operator']}({$where['column']})";
             }
+        }
+
+        return $filter;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function parseStats(): ?string
+    {
+        if (empty($this->stats)) {
+            return null;
+        }
+
+        $filter = "| stats ";
+        if($this->stats['function'] === 'count') {
+            $filter .= "{$this->stats['function']}()";
         }
 
         return $filter;

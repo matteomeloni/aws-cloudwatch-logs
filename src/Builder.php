@@ -37,6 +37,11 @@ class Builder
     protected array $sorts = [];
 
     /**
+     * @var array
+     */
+    protected array $aggregates = [];
+
+    /**
      * @var int|null
      */
     protected ?int $limit = null;
@@ -268,6 +273,43 @@ class Builder
     public function orWhereNotNull(string $column): Builder
     {
         return $this->whereNotNull($column, 'or');
+    }
+
+    /**
+     * Retrieve the "count" result of the query.
+     *
+     * @return int|Aggregates
+     */
+    public function count()
+    {
+        $result = $this->aggregate(__FUNCTION__, null);
+
+        return ($result->getQueryStatus() === 'Complete')
+            ? $result->get()
+            : $result;
+    }
+
+    /**
+     * Execute an aggregate function on the database.
+     *
+     * @param string $function
+     * @param string|null $columns
+     * @return Aggregates
+     */
+    public function aggregate(string $function, ?string $columns): Aggregates
+    {
+        $this->aggregates = [
+            'function' => $function,
+            'column' => $columns,
+        ];
+
+        $timeRange = $this->extractTimeRange();
+        $queryId = $this->cloudWatchLogsInsightQueryId
+            ?: $this->client->startQuery($timeRange, $this->buildQuery());
+
+        return new Aggregates(
+            $this->client->getQueryResults($queryId)
+        );
     }
 
     /**
@@ -506,6 +548,7 @@ class Builder
         $properties = [
             'select' => $this->columns,
             'wheres' => $wheres,
+            'stats' => $this->aggregates,
             'sorts' => $this->sorts,
             'limit' => $this->limit
         ];
