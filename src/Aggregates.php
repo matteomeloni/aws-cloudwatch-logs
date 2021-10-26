@@ -15,12 +15,20 @@ class Aggregates
      */
     protected $value;
 
+    /**
+     * @var string
+     */
+    protected string $function;
+
     public function __construct($logResult)
     {
         $this->cloudWatchLogsInsightQueryId = $logResult['queryId'];
+
         $this->cloudWatchLogsInsightQueryStatus = $logResult['status'];
 
-        $this->parseResults(Arr::first($logResult['results']));
+        $this->value = $this->extractValue($logResult);
+
+        $this->function = $this->extractFunction($logResult);
     }
 
     /**
@@ -32,28 +40,25 @@ class Aggregates
     }
 
     /**
-     * @param $results
+     * @param $logResult
+     * @return int|float
      */
-    private function parseResults($results)
+    private function extractValue($logResult)
     {
-        $function = $this->getFunction(array_key_first($results));
-        $value = Arr::first($results);
+        $logResult = Arr::first($logResult['results']);
 
-        switch ($function) {
-            case 'count':
-            case 'min':
-            case 'max':
-                $this->value = (int) $value;
-                break;
-        }
+        return Arr::first($logResult) + 0;
     }
 
     /**
-     * @param $rawFunction
+     * @param $logResult
      * @return string
      */
-    private function getFunction($rawFunction): string
+    private function extractFunction($logResult): string
     {
-        return (string) Str::of($rawFunction)->replaceMatches('/\(.+\)/', '');
+        $rawFunction = array_key_first(Arr::first($logResult['results']));
+
+        return (string) Str::of($rawFunction)
+            ->replaceMatches('/\(.+\)/', '');
     }
 }
