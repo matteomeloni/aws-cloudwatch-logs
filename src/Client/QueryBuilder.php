@@ -156,9 +156,13 @@ class QueryBuilder
         }
 
         $filter = "| stats ";
-        if($this->stats['function'] === 'count') {
-            $filter .= "{$this->stats['function']}()";
-        }
+//        if ($this->stats['function'] === 'count') {
+            $filter .= "{$this->stats['function']}({$this->stats['column']})";
+//        }
+
+//        if ($this->stats['function'] === 'min') {
+//            $filter .= "{$this->stats['function']}({$this->stats['column']})";
+//        }
 
         return $filter;
     }

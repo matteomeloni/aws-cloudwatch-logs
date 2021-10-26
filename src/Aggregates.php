@@ -3,6 +3,7 @@
 namespace Matteomeloni\AwsCloudwatchLogs;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Matteomeloni\AwsCloudwatchLogs\Traits\HasCloudWatchLogsInsight;
 
 class Aggregates
@@ -12,7 +13,7 @@ class Aggregates
     /**
      * @var float|int
      */
-    protected  $value;
+    protected $value;
 
     public function __construct($logResult)
     {
@@ -35,10 +36,22 @@ class Aggregates
      */
     private function parseResults($results)
     {
-        $function = Arr::first(array_keys($results));
+        $function = $this->getFunction(array_key_first($results));
 
-        if (preg_match('/count/', $function)) {
-            $this->value = (int) $results[$function] ;
+        switch ($function) {
+            case 'count':
+            case 'min':
+                $this->value = (int)$results[$function];
+                break;
         }
+    }
+
+    /**
+     * @param $rawFunction
+     * @return string
+     */
+    private function getFunction($rawFunction): string
+    {
+        return (string) Str::of($rawFunction)->replaceMatches('/\(.+\)/', '');
     }
 }

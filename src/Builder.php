@@ -282,11 +282,18 @@ class Builder
      */
     public function count()
     {
-        $result = $this->aggregate(__FUNCTION__, null);
+        return $this->aggregate(__FUNCTION__, null);
+    }
 
-        return ($result->getQueryStatus() === 'Complete')
-            ? $result->get()
-            : $result;
+    /**
+     * Retrieve the minimum value of a given column.
+     *
+     * @param string $column
+     * @return int|Aggregates
+     */
+    public function min(string $column)
+    {
+        return $this->aggregate(__FUNCTION__, $column);
     }
 
     /**
@@ -294,9 +301,9 @@ class Builder
      *
      * @param string $function
      * @param string|null $columns
-     * @return Aggregates
+     * @return float|int|Aggregates
      */
-    public function aggregate(string $function, ?string $columns): Aggregates
+    public function aggregate(string $function, ?string $columns)
     {
         $this->aggregates = [
             'function' => $function,
@@ -307,9 +314,13 @@ class Builder
         $queryId = $this->cloudWatchLogsInsightQueryId
             ?: $this->client->startQuery($timeRange, $this->buildQuery());
 
-        return new Aggregates(
+        $aggregate = new Aggregates(
             $this->client->getQueryResults($queryId)
         );
+
+        return ($aggregate->getQueryStatus() === 'Complete')
+            ? $aggregate->get()
+            : $aggregate;
     }
 
     /**
