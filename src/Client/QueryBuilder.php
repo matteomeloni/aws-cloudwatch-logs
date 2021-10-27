@@ -23,6 +23,14 @@ class QueryBuilder
      */
     private array $wheres;
 
+    /**
+     * @var array
+     */
+    private array $groups;
+
+    /**
+     * @var array|mixed
+     */
     private array $stats;
 
     /**
@@ -51,6 +59,7 @@ class QueryBuilder
         $this->model = $model;
         $this->fields = $properties['select'] ?? [];
         $this->wheres = $properties['wheres'] ?? [];
+        $this->groups = $properties['groups'] ?? [];
         $this->stats = $properties['stats'] ?? [];
         $this->sorts = $properties['sorts'] ?? [];
         $this->limit = $properties['limit'] ?? null;
@@ -155,14 +164,11 @@ class QueryBuilder
             return null;
         }
 
-        $filter = "| stats ";
-//        if ($this->stats['function'] === 'count') {
-        $filter .= "{$this->stats['function']}({$this->stats['column']})";
-//        }
+        $filter = "| stats {$this->stats['function']}({$this->stats['column']})";
 
-//        if ($this->stats['function'] === 'min') {
-//            $filter .= "{$this->stats['function']}({$this->stats['column']})";
-//        }
+        if(!empty($this->groups)) {
+            $filter .= ' by ' . implode(', ', $this->groups);
+        }
 
         return $filter;
     }

@@ -7,6 +7,7 @@ use Matteomeloni\CloudwatchLogs\Client\Client;
 use Matteomeloni\CloudwatchLogs\Client\QueryBuilder;
 use Matteomeloni\CloudwatchLogs\Collections\QueriesCollection;
 use Matteomeloni\CloudwatchLogs\Collections\LogsCollection;
+use Matteomeloni\CloudwatchLogs\Collections\AggregatesCollection;
 use Matteomeloni\CloudwatchLogs\Exceptions\LogNotFoundException;
 
 class Builder
@@ -35,6 +36,11 @@ class Builder
      * @var array
      */
     protected array $sorts = [];
+
+    /**
+     * @var array
+     */
+    protected array $groups = [];
 
     /**
      * @var array
@@ -278,9 +284,20 @@ class Builder
     }
 
     /**
+     * @param array|string $groups
+     * @return $this
+     */
+    public function groupBy($groups): Builder
+    {
+        $this->groups[] = $groups;
+
+        return $this;
+    }
+
+    /**
      * Retrieve the "count" result of the query.
      *
-     * @return float|int|Aggregates
+     * @return int|AggregatesCollection|Aggregates
      */
     public function count()
     {
@@ -291,7 +308,7 @@ class Builder
      * Retrieve the minimum value of a given column.
      *
      * @param string $column
-     * @return float|int|Aggregates
+     * @return float|int|AggregatesCollection|Aggregates
      */
     public function min(string $column)
     {
@@ -302,7 +319,7 @@ class Builder
      * Retrieve the maximum value of a given column.
      *
      * @param string $column
-     * @return float|int|Aggregates
+     * @return float|int|AggregatesCollection|Aggregates
      */
     public function max(string $column)
     {
@@ -313,7 +330,7 @@ class Builder
      * Retrieve the sum of the value of a given column.
      *
      * @param string $column
-     * @return float|int|Aggregates
+     * @return float|int|AggregatesCollection|Aggregates
      */
     public function sum(string $column)
     {
@@ -324,7 +341,7 @@ class Builder
      * Retrieve the average of the values of a given column.
      *
      * @param string $column
-     * @return float|Aggregates
+     * @return float|int|AggregatesCollection|Aggregates
      */
     public function avg(string $column)
     {
@@ -335,7 +352,7 @@ class Builder
      * Alias for the "avg" method.
      *
      * @param string $column
-     * @return float|int|Aggregates
+     * @return float|int|AggregatesCollection|Aggregates
      */
     public function average(string $column)
     {
@@ -347,7 +364,7 @@ class Builder
      *
      * @param string $function
      * @param string|null $columns
-     * @return float|int|Aggregates
+     * @return float|int|AggregatesCollection|Aggregates
      */
     public function aggregate(string $function, ?string $columns)
     {
@@ -361,8 +378,7 @@ class Builder
             ?: $this->client->startQuery($timeRange, $this->buildQuery());
 
         $aggregate = new Aggregates(
-            $this->client->getQueryResults($queryId)
-        );
+            $this->client->getQueryResults($queryId));
 
         return ($aggregate->getQueryStatus() === 'Complete')
             ? $aggregate->get()
@@ -608,6 +624,7 @@ class Builder
             'select' => $this->columns,
             'wheres' => $wheres,
             'stats' => $this->aggregates,
+            'groups' => $this->groups,
             'sorts' => $this->sorts,
             'limit' => $this->limit
         ];

@@ -4,6 +4,7 @@ namespace Matteomeloni\CloudwatchLogs;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Matteomeloni\CloudwatchLogs\Collections\AggregatesCollection;
 use Matteomeloni\CloudwatchLogs\Traits\HasCloudWatchLogsInsight;
 
 class Aggregates
@@ -11,7 +12,7 @@ class Aggregates
     use HasCloudWatchLogsInsight;
 
     /**
-     * @var float|int
+     * @var float|int|AggregatesCollection
      */
     protected $value;
 
@@ -26,7 +27,7 @@ class Aggregates
 
         $this->cloudWatchLogsInsightQueryStatus = $logResult['status'];
 
-        $this->value = $this->extractValue($logResult);
+        $this->value = $this->extractValue($logResult['results']);
 
         $this->function = $this->extractFunction($logResult);
     }
@@ -41,13 +42,17 @@ class Aggregates
 
     /**
      * @param $logResult
-     * @return int|float
+     * @return int|float|AggregatesCollection
      */
     private function extractValue($logResult)
     {
-        $logResult = Arr::first($logResult['results']);
+        if (count($logResult) === 1 ) {
+            $logResult = Arr::first($logResult);
 
-        return Arr::first($logResult) + 0;
+            return Arr::first($logResult) + 0;
+        }
+
+        return $this->makeCollection($logResult);
     }
 
     /**
@@ -60,5 +65,14 @@ class Aggregates
 
         return (string)Str::of($rawFunction)
             ->replaceMatches('/\(.+\)/', '');
+    }
+
+    /**
+     * @param $values
+     * @return AggregatesCollection
+     */
+    public function makeCollection($values): AggregatesCollection
+    {
+        return new AggregatesCollection($values);
     }
 }
