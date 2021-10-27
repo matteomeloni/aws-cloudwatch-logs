@@ -172,6 +172,8 @@ Log::query()->limit(10)->get();
 
 This library also provides a variety of methods for retrieving aggregate values like `count`, `min`, `max`, `sum`, and `avg`. 
 
+For more information of this feature, you can see the [Aws CloudWatch Logs Insigiht Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)
+
 You may call any of these methods after constructing your query:
 
 ```php
@@ -187,6 +189,22 @@ Log::query()->max('column');
 Log::query()->sum('column');
 Log::query()->avg('column');
 Log::query()->average('column'); //Alias for the "avg" method
+```
+
+It is possible to group and aggregate the results through the `groupBy` method. 
+
+In this case the result of the operation will be a collection.
+
+In addition to a specific column, it is also possible to group for all the functions offered by the AWS CloudWatch Logs Insights service.
+
+```php
+use App\Models\Log;
+
+
+Log::query()
+    ->groupBy('column')
+    ->groupBy('bin (1m)')
+    ->count();
 ```
 
 ### Retrieving Single Model
@@ -265,12 +283,6 @@ If you discover any security related issues, please email matteomelonig@gmail.co
 ## License
 
 The MIT License (MIT). Please see [License File][link-license] for more information.
-
-
-
-
-
-
 
 [ico-version]: https://img.shields.io/packagist/v/matteomeloni/aws-cloudwatch-logs.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/matteomeloni/aws-cloudwatch-logs.svg?style=flat-square
