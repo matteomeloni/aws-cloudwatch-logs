@@ -81,12 +81,14 @@ class Builder
     /**
      * Set the columns to be selected.
      *
-     * @param array $columns
+     * @param array|mixed $columns
      * @return $this
      */
-    public function select(array $columns = []): Builder
+    public function select($columns = []): Builder
     {
-        $this->columns = $columns;
+        $this->columns = is_array($columns)
+            ? $columns
+            : func_get_args();
 
         return $this;
     }
@@ -438,7 +440,9 @@ class Builder
      */
     public function all(array $columns = ['*']): LogsCollection
     {
-        $this->columns = $columns;
+        $this->columns = (empty($this->columns))
+            ? $columns
+            : $this->columns;
 
         return $this->getAll();
     }

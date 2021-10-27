@@ -84,6 +84,23 @@ $logs = Log::query($queryId)->get();
 $logs = Log::queries();
 ```
 
+##### Select
+
+The `select` method allows you to specify which columns to show in the query result.
+
+```php
+use App\Models\Log;
+
+$logs = Log::query()
+    ->select(['column1', 'column2'])
+    ->get();
+
+
+$logs = Log::query()
+    ->select('column1', 'column2')
+    ->get();
+```
+
 ##### Conditions
 
 Avaialable comparison operators: `=` `!=` `<` `<=` `>` `>=`
@@ -120,6 +137,37 @@ Log::whereNotNull('column')->get();
 Log::orWhereNotNull('column')->get();
 ```
 
+##### Ordering
+
+The `orderBy` method allows sorting of the query by a given column.
+
+The first argument accepted by this metod, should be the column you wish to sort by and the second argument, determines the direction of the sort, `asc` or `desc`
+
+```php
+use App\Models\Log;
+
+//Ordering log by column asc...
+Log::query()->orderBy('column')->get();
+
+//Ordering log by column desc...
+Log::query()->orderBy('column','desc')->get();
+
+//Ordering log by column desc...
+Log::query()->orderByDesc('column')->get();
+```
+
+##### Limit
+
+The `take` or `limit`method allows to limit the number of results returned from the query.
+
+```php
+use App\Models\Log;
+
+Log::query()->take(10)->get();
+
+Log::query()->limit(10)->get();
+```
+
 ##### Aggregates
 
 This library also provides a variety of methods for retrieving aggregate values like `count`, `min`, `max`, `sum`, and `avg`. 
@@ -134,11 +182,11 @@ $count = Log::query()
     ->count();
 
 //Other types of aggregates
-Log::query()->min('level_code');
-Log::query()->max('level_code');
-Log::query()->sum('level_code');
-Log::query()->avg('level_code');
-Log::query()->average('level_code'); //Alias for the "avg" method
+Log::query()->min('column');
+Log::query()->max('column');
+Log::query()->sum('column');
+Log::query()->avg('column');
+Log::query()->average('column'); //Alias for the "avg" method
 ```
 
 ### Retrieving Single Model
@@ -156,6 +204,12 @@ $log = Log::find($ptr);
 
 // Retrieve the first model matching the query constraints...
 $log = Log::all()->first();
+
+// Find a model by its ptr or throw an exception...
+$log = Log::findOrFail($ptr);
+
+// Find multiple models by their ptr.
+$logs = Log::findMany([$ptr1,$ptr2,$ptr3]);
 ```
 
 ### Store new log
