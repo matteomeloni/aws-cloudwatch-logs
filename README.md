@@ -6,8 +6,6 @@
 
 This is where your description should go. Take a look at [contributing.md][link-contributors] to see a to do list.
 
-
-
 * [Installation](#Installation)
 
 * [Usage](#Usage)
@@ -31,8 +29,8 @@ This is where your description should go. Take a look at [contributing.md][link-
   * [Retrieving Single Model](#retrieving-single-model)
   
   * [Store New Log](#store-new-log)
-    
-    
+  
+  * [Requirements](#requirements)
 
 ## Installation
 
@@ -88,7 +86,7 @@ foreach(Logs::all() as $log) {
 $logs = Logs::whereBetween('timestamp', [$start, $end])->get();
 ```
 
-#### Building Queris
+#### Building Queries
 
 This package support the "CloudWatch Logs Insights" feature.
 
@@ -284,6 +282,12 @@ $log = Log::create([
     'attributeTwo' => 'bar'
 ]);
 ```
+
+## Requirements
+
+- `php 7.4 or later`
+
+- `Laravel 7 or later`
 
 ## Change log
 
