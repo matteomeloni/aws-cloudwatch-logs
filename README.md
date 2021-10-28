@@ -6,6 +6,34 @@
 
 This is where your description should go. Take a look at [contributing.md][link-contributors] to see a to do list.
 
+
+
+* [Installation](#Installation)
+
+* [Usage](#Usage)
+  
+  * [Retrieving Models](#retrieving-models)
+    
+    * [Building Queries](#building-queries)
+      
+      * [Select](#select)
+      
+      * [Conditions](#conditions)
+      
+      * [Ordering](#ordering)
+      
+      * [Limit](#limit)
+      
+      * [Aggregates](#aggregates)
+      
+      * [Retrieving Single Model](#retrieving-single-model)
+  
+  * [Retrieving Single Model](#retrieving-single-model)
+  
+  * [Store New Log](#store-new-log)
+    
+    
+
 ## Installation
 
 ---
