@@ -4,9 +4,12 @@ namespace Matteomeloni\CloudwatchLogs\Client;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Illuminate\Support\Str;
+use Matteomeloni\CloudwatchLogs\Traits\HasMessageParser;
 
 class Client
 {
+    use HasMessageParser;
+
     /**
      * @var CloudWatchLogsClient
      */
@@ -168,8 +171,8 @@ class Client
             'logGroupName' => $this->logGroupName,
             'logStreamName' => $this->logStreamName,
             'logEvents' => [[
-                'message' => $this->prepareData($data),
-                'timestamp' => $this->getTimestamp()
+                'message' => $this->getRawMessage($data),
+                'timestamp' => now()->getTimestampMs()
             ]]
         ];
 
@@ -197,26 +200,5 @@ class Client
                 'secret' => config('aws-cloudwatch-logs.secret')
             ]
         ]);
-    }
-
-    /**
-     * @param $data
-     * @return string
-     */
-    private function prepareData($data): string
-    {
-        if (is_array($data)) {
-            $data = json_encode($data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * @return float
-     */
-    private function getTimestamp(): float
-    {
-        return round(microtime(true) * 1000);
     }
 }
