@@ -90,7 +90,7 @@ $logs = Logs::whereBetween('timestamp', [$start, $end])->get();
 
 This package support the "CloudWatch Logs Insights" feature.
 
-For more information of this feature, you can see the [Aws CloudWatch Logs Insigiht Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)
+For more information of this feature, you can see the [Aws CloudWatch Logs Insight Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)
 
 To start a new query you can use the `query` method and the result of this operation is the `queryId` string, to be used to retrieve the query results:
 
@@ -104,7 +104,6 @@ $queryId = Log::query()
 
 // Retrieve the query results... 
 $logs = Log::query($queryId)->get();
-
 
 // Retrieve last started query...
 $logs = Log::queries();
@@ -184,7 +183,7 @@ Log::query()->orderByDesc('column')->get();
 
 ##### Limit
 
-The `take` or `limit`method allows to limit the number of results returned from the query.
+The `take` or `limit` method allows to limit the number of results returned from the query.
 
 ```php
 use App\Models\Log;
