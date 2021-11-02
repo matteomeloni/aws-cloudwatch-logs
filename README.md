@@ -4,7 +4,7 @@
 [![Total Downloads][ico-downloads]][link-downloads]
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-This is where your description should go. Take a look at [contributing.md][link-contributors] to see a to do list.
+Eloquent syntax for store and retrieve logs from Aws CloudWatch Logs. 
 
 * [Installation](#Installation)
 
