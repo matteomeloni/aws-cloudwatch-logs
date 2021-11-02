@@ -45,7 +45,7 @@ $ composer require matteomeloni/aws-cloudwatch-logs
 Run
 
 ```bash
-$ php artisan vendor:publish --provider 'Matteomeloni\AwsCloudwatchLogs\AwsCloudwatchLogsServiceProvider'
+$ php artisan vendor:publish --provider 'Matteomeloni\CloudwatchLogs\CloudwatchLogsServiceProvider'
 ```
 
 Update AWS CloudWatch Logs config in `config/aws-cloudwatch-logs.php`
