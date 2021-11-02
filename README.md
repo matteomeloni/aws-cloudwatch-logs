@@ -54,7 +54,7 @@ Update AWS CloudWatch Logs config in `config/aws-cloudwatch-logs.php`
 
 ---
 
-Extends your model with `Matteomeloni\AwsCloudwatchLogs\CloudWatchLogs`
+Extends your model with `Matteomeloni\CloudwatchLogs\CloudWatchLogs`
 
 ```php
 use Matteomeloni\CloudwatchLogs\CloudWatchLogs;
