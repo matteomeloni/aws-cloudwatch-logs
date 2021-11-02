@@ -1,6 +1,6 @@
 {
     "name": "matteomeloni/cloudwatch-logs",
-    "description": ":package_description",
+    "description": "Eloquent syntax for store and retrieve logs from Aws CloudWatch Logs.",
     "license": "MIT",
     "authors": [
         {
