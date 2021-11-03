@@ -315,8 +315,8 @@ If you discover any security related issues, please email matteomelonig@gmail.co
 
 The MIT License (MIT). Please see [License File][link-license] for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/matteomeloni/cloudwatch-logs.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/matteomeloni/cloudwatch-logs.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/matteomeloni/cloudwatch-logs?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/matteomeloni/cloudwatch-logs?style=flat-square
 [link-packagist]: https://packagist.org/packages/matteomeloni/cloudwatch-logs
 [link-downloads]: https://packagist.org/packages/matteomeloni/cloudwatch-logs
 [link-author]: https://github.com/matteomeloni
