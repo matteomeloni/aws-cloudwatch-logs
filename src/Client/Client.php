@@ -6,7 +6,7 @@ use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Illuminate\Support\Str;
 use Matteomeloni\CloudwatchLogs\Traits\HasMessageParser;
 
-class Client
+class Client implements ClientInterface
 {
     use HasMessageParser;
 
