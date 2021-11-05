@@ -5,6 +5,7 @@ namespace Matteomeloni\CloudwatchLogs\Client\Mock;
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Aws\MockHandler;
 use Aws\Result;
+use Illuminate\Support\Str;
 use Matteomeloni\CloudwatchLogs\Client\ClientInterface;
 use Matteomeloni\CloudwatchLogs\Traits\HasMessageParser;
 
@@ -54,12 +55,18 @@ class Client implements ClientInterface
 
     public function startQuery(array $timeRange, string $query): ?string
     {
-        // TODO: Implement startQuery() method.
+        return Str::uuid();
     }
 
     public function getQueryResults(string $queryId): array
     {
-        // TODO: Implement getQueryResults() method.
+        return $this->mockConnection([
+            'queryId' => $queryId,
+            'status' => 'Complete',
+            'results' => (new Factory(15))->logs()
+        ])->getQueryResults([
+            'queryId' => $queryId
+        ])->toArray();
     }
 
     public function describeQueries(): array
