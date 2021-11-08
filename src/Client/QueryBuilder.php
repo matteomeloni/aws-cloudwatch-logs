@@ -74,7 +74,7 @@ class QueryBuilder
     {
         $this->query .= $this->parseFields();
         $this->query .= $this->setLogStream();
-        $this->query .= $this->parseWheres();
+        $this->query .= $this->parseWheres($this->wheres);
         $this->query .= $this->parseStats();
         $this->query .= $this->parseSorts();
 
@@ -114,45 +114,65 @@ class QueryBuilder
     }
 
     /**
+     * @param $wheres
+     * @param bool $nested
      * @return string|null
      */
-    private function parseWheres(): ?string
+    private function parseWheres($wheres, bool $nested = false): ?string
     {
-        if (empty($this->wheres)) {
+        if (empty($wheres)) {
             return null;
         }
 
-        $filter = "| filter ";
+        $filter = ($nested === false) ? "| filter " : "";
 
-        foreach ($this->wheres as $index => $where) {
-            if ($index !== array_key_first($this->wheres)) {
-                $filter .= " {$where['boolean']} ";
-            }
-
-            if (in_array($where['operator'], ['=', '!=', '>', '>=', '<', '<='])) {
-                $filter .= "{$where['column']} {$where['operator']} '{$where['value']}'";
-            }
-
-            if (in_array($where['operator'], ['in', 'not in'])) {
-                $filter .= "{$where['column']} {$where['operator']}" . json_encode($where['value']);
-            }
-
-            if ($where['operator'] === 'between') {
-                [$min, $max] = $where['value'];
-
-                $filter .= "({$where['column']} <= {$min} and {$where['column']} >= {$max})";
-            }
-
-            if (in_array($where['operator'], ['like', 'not like'])) {
-                $filter .= "{$where['column']} {$where['operator']} /{$where['value']}/";
-            }
-
-            if (in_array($where['operator'], ['isempty', 'not isempty'])) {
-                $filter .= "{$where['operator']}({$where['column']})";
+        foreach ($wheres as $index => $where) {
+            if(Arr::exists($where, 'nested')){
+                $filter .= " {$where['boolean']} (" . $this->parseWheres($where['nested'], true) . ')';
+            } else {
+                $filter .= $this->getWhereStatement($where, $index === array_key_first($wheres));
             }
         }
 
         return $filter;
+    }
+
+    /**
+     * @param array $where
+     * @param bool $isFirst
+     * @return string
+     */
+    private function getWhereStatement(array $where, bool $isFirst): string
+    {
+        $statement = '';
+
+        if (!$isFirst) {
+            $statement .= " {$where['boolean']} ";
+        }
+
+        if (in_array($where['operator'], ['=', '!=', '>', '>=', '<', '<='])) {
+            $statement .= "{$where['column']} {$where['operator']} '{$where['value']}'";
+        }
+
+        if (in_array($where['operator'], ['in', 'not in'])) {
+            $statement .= "{$where['column']} {$where['operator']}" . json_encode($where['value']);
+        }
+
+        if ($where['operator'] === 'between') {
+            [$min, $max] = $where['value'];
+
+            $statement .= "({$where['column']} <= {$min} and {$where['column']} >= {$max})";
+        }
+
+        if (in_array($where['operator'], ['like', 'not like'])) {
+            $statement .= "{$where['column']} {$where['operator']} /{$where['value']}/";
+        }
+
+        if (in_array($where['operator'], ['isempty', 'not isempty'])) {
+            $statement .= "{$where['operator']}({$where['column']})";
+        }
+
+        return $statement;
     }
 
     /**
