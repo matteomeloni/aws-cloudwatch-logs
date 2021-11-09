@@ -98,14 +98,18 @@ class Client implements ClientInterface
     {
         $mock = new MockHandler();
 
-        if(!empty($data)) {
+        if (!empty($data)) {
             $mock->append(new Result($data));
         }
 
         return new CloudWatchLogsClient([
             'version' => 'latest',
             'region' => 'us-west-2',
-            'handler' => $mock
+            'handler' => $mock,
+            'credentials' => [
+                'key' => 'xxx',
+                'secret' => 'xxx'
+            ]
         ]);
     }
 }

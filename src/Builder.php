@@ -9,6 +9,7 @@ use Matteomeloni\CloudwatchLogs\Client\QueryBuilder;
 use Matteomeloni\CloudwatchLogs\Collections\QueriesCollection;
 use Matteomeloni\CloudwatchLogs\Collections\LogsCollection;
 use Matteomeloni\CloudwatchLogs\Collections\AggregatesCollection;
+use Matteomeloni\CloudwatchLogs\Contracts\ClientInterface;
 use Matteomeloni\CloudwatchLogs\Exceptions\LogNotFoundException;
 
 class Builder
@@ -19,9 +20,9 @@ class Builder
     protected CloudWatchLogs $model;
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
-    protected Client $client;
+    protected $client;
 
     /**
      * @var array
@@ -233,6 +234,18 @@ class Builder
     }
 
     /**
+     * Add an "or where not in" clause to the query.
+     *
+     * @param string $column
+     * @param array $values
+     * @return $this
+     */
+    public function orWhereNotIn(string $column, array $values): Builder
+    {
+        return $this->where($column, 'not in', $values, 'or');
+    }
+
+    /**
      * Add a "where between" clause to the query.
      *
      * @param string $column
@@ -255,18 +268,6 @@ class Builder
     public function orWhereBetween(string $column, array $values): Builder
     {
         return $this->where($column, 'between', $values, 'or');
-    }
-
-    /**
-     * Add an "or where not in" clause to the query.
-     *
-     * @param string $column
-     * @param array $values
-     * @return $this
-     */
-    public function orWhereNotIn(string $column, array $values): Builder
-    {
-        return $this->where($column, 'not in', $values, 'or');
     }
 
     /**
@@ -708,5 +709,10 @@ class Builder
         );
 
         return $queries->parsed();
+    }
+
+    public function __get($name)
+    {
+        return $this->$name;
     }
 }
