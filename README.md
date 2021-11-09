@@ -18,6 +18,8 @@ Eloquent syntax for store and retrieve logs from Aws CloudWatch Logs.
       
       * [Conditions](#conditions)
       
+      * [Logical Grouping](#logical-grouping)
+      
       * [Ordering](#ordering)
       
       * [Limit](#limit)
@@ -160,6 +162,25 @@ Log::orWhereNull('column')->get();
 
 Log::whereNotNull('column')->get();
 Log::orWhereNotNull('column')->get();
+```
+
+##### Logical Grouping
+
+Sometimes it may be necessary to group several "where" clauses in parentheses to achieve logical grouping in the query.
+
+To accomplish this, you may pass a closure to the `where` method:
+
+```php
+use App\Models\Log;
+
+
+Log::query()
+    ->where('column', 'operator', 'value')
+    ->where(function ($query) {
+        $query->where('column', 'operator', 'value')
+           ->orWhere('column', 'operator', 'value');
+    })
+    ->get();
 ```
 
 ##### Ordering

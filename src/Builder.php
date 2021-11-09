@@ -2,6 +2,7 @@
 
 namespace Matteomeloni\CloudwatchLogs;
 
+use Closure;
 use Matteomeloni\CloudwatchLogs\Client\Analyzer;
 use Matteomeloni\CloudwatchLogs\Client\Client;
 use Matteomeloni\CloudwatchLogs\Client\QueryBuilder;
@@ -117,9 +118,9 @@ class Builder
     /**
      * Add a "where" clause to the query.
      *
-     * @param $column
-     * @param null $operator
-     * @param null $value
+     * @param Closure|string $column
+     * @param mixed $operator
+     * @param mixed $value
      * @param string $boolean
      * @return $this
      */
@@ -127,6 +128,10 @@ class Builder
     {
         if (func_num_args() == 2) {
             [$value, $operator] = [$operator, '='];
+        }
+
+        if($column instanceof Closure && is_null($operator)) {
+           return $this->whereNested($column, $boolean);
         }
 
         $this->wheres[] = [
@@ -140,15 +145,52 @@ class Builder
     }
 
     /**
+     * Add a nested where statement to the query.
+     *
+     * @param Closure $callback
+     * @param string $boolean
+     * @return $this
+     */
+    public function whereNested(Closure $callback, string $boolean = 'and'): Builder
+    {
+        call_user_func($callback, $query = new Builder($this->model));
+
+        return $this->addNestedWhereQuery($query, $boolean);
+    }
+
+    /**
+     * Add another query builder as a nested where to the query builder.
+     *
+     * @param $query
+     * @param string $boolean
+     * @return $this
+     */
+    public function addNestedWhereQuery($query, string $boolean = 'and'): Builder
+    {
+        if (count($query->wheres)) {
+            $this->wheres[] = [
+                'boolean' => $boolean,
+                'nested' => $query->wheres
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
      * Add an "or where" clause to the query.
      *
-     * @param string $column
-     * @param string|null $operator
+     * @param Closure|string $column
+     * @param mixed $operator
      * @param mixed $value
      * @return $this
      */
-    public function orWhere(string $column, string $operator = null, $value = null): Builder
+    public function orWhere( $column, $operator = null, $value = null): Builder
     {
+        if (func_num_args() == 2) {
+            [$value, $operator] = [$operator, '='];
+        }
+
         return $this->where($column, $operator, $value, 'or');
     }
 
