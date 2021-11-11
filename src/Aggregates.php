@@ -29,7 +29,7 @@ class Aggregates
 
         $this->value = $this->extractValue($logResult['results']);
 
-        $this->function = $this->extractFunction($logResult);
+        $this->function = $this->extractFunction($logResult['results']);
     }
 
     /**
@@ -61,7 +61,7 @@ class Aggregates
      */
     private function extractFunction($logResult): string
     {
-        $rawFunction = array_key_first(Arr::first($logResult['results']));
+        $rawFunction = array_key_first(Arr::first($logResult));
 
         return (string)Str::of($rawFunction)
             ->replaceMatches('/\(.+\)/', '');
