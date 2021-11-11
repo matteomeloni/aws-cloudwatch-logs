@@ -110,7 +110,7 @@ class QueryBuilder
             $this->fields[] = '@ingestionTime';
         }
 
-        return "fields " . implode(',', $this->fields);
+        return "fields " . implode(', ', $this->fields);
     }
 
     /**
@@ -178,7 +178,7 @@ class QueryBuilder
     /**
      * @return string|null
      */
-    public function parseStats(): ?string
+    private function parseStats(): ?string
     {
         if (empty($this->stats)) {
             return null;
@@ -196,7 +196,7 @@ class QueryBuilder
     /**
      * @return string|null
      */
-    public function parseSorts(): ?string
+    private function parseSorts(): ?string
     {
         if (empty($this->sorts)) {
             return null;
@@ -212,10 +212,11 @@ class QueryBuilder
             $sort .= "{$column} {$item['direction']}";
 
             if ($index !== array_key_last($this->sorts)) {
-                $sort .= " ,";
+                $sort .= ", ";
             }
         }
 
         return $sort;
     }
+
 }
