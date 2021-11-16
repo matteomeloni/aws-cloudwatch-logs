@@ -2,12 +2,19 @@
 
 namespace Matteomeloni\CloudwatchLogs;
 
+use ArrayAccess;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Database\Eloquent\Concerns\HasAttributes;
+use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Traits\ForwardsCalls;
+use JsonSerializable;
 use Matteomeloni\CloudwatchLogs\Collections\LogsCollection;
 
-abstract class CloudWatchLogs
+abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
 {
-    use ForwardsCalls;
+    use HasAttributes,
+        ForwardsCalls;
 
     /**
      * The name of the log group.
@@ -28,7 +35,7 @@ abstract class CloudWatchLogs
      *
      * @var array
      */
-    private array $attributes = [];
+    protected $attributes = [];
 
     /**
      * Create a new Aws CloudWatch Logs model instance.
@@ -204,5 +211,41 @@ abstract class CloudWatchLogs
     public function __set(string $key, $value)
     {
         $this->attributes[$key] = $value;
+    }
+
+    public function offsetExists($offset)
+    {
+        return ! is_null($this->getAttribute($offset));
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->getAttribute($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->setAttribute($offset, $value);
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($this->attributes[$offset], $this->relations[$offset]);
+    }
+
+    public function toJson($options = 0)
+    {
+        $json = json_encode($this->jsonSerialize(), $options);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw JsonEncodingException::forModel($this, json_last_error_msg());
+        }
+
+        return $json;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }

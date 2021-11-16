@@ -2,6 +2,10 @@
 
 All notable changes to `AwsCloudwatchLogs` will be documented in this file.
 
+## Version 1.0.3 - 2021-11-16
+
+- minor changes
+
 ## Version 1.0.2 - 2021-11-11
 
 - Added Tests
