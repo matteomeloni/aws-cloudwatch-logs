@@ -5,7 +5,10 @@ namespace Matteomeloni\CloudwatchLogs;
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
+use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
+use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Support\Traits\ForwardsCalls;
 use JsonSerializable;
@@ -14,6 +17,9 @@ use Matteomeloni\CloudwatchLogs\Collections\LogsCollection;
 abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonSerializable
 {
     use HasAttributes,
+        HidesAttributes,
+        GuardsAttributes,
+        HasTimestamps,
         ForwardsCalls;
 
     /**
@@ -31,11 +37,46 @@ abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonS
     protected string $logStreamName;
 
     /**
+     * The primary key for the model.
+     *
+     * @var string|null
+     */
+    protected ?string $primaryKey = null;
+
+    /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected string $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public bool $incrementing = false;
+
+    /**
      * The model's attributes.
      *
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * The name of the "created at" column.
+     *
+     * @var string|null
+     */
+    const CREATED_AT = null;
+
+    /**
+     * The name of the "updated at" column.
+     *
+     * @var string|null
+     */
+    const UPDATED_AT = null;
 
     /**
      * Create a new Aws CloudWatch Logs model instance.
@@ -163,7 +204,8 @@ abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonS
      */
     public function toArray(): array
     {
-        return $this->attributes;
+
+        return $this->attributesToArray();
     }
 
     /**
@@ -198,7 +240,7 @@ abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonS
      */
     public function __get(string $key)
     {
-        return $this->attributes[$key];
+        return $this->getAttribute($key);
     }
 
     /**
@@ -210,10 +252,10 @@ abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonS
      */
     public function __set(string $key, $value)
     {
-        $this->attributes[$key] = $value;
+        $this->setAttribute($key, $value);
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return ! is_null($this->getAttribute($offset));
     }
@@ -244,8 +286,41 @@ abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonS
         return $json;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
+    }
+
+    /**
+     * Get the value indicating whether the IDs are incrementing.
+     *
+     * @return bool
+     */
+    public function getIncrementing(): bool
+    {
+        return $this->incrementing;
+    }
+
+    /**
+     * Set whether IDs are incrementing.
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function setIncrementing(bool $value): CloudWatchLogs
+    {
+        $this->incrementing = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of the model's primary key.
+     *
+     * @return mixed
+     */
+    public function getKey()
+    {
+        return $this->getAttribute($this->getKeyName());
     }
 }
