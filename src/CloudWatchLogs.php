@@ -155,10 +155,13 @@ abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonS
      */
     public function fill(array $attributes): CloudWatchLogs
     {
-        $this->attributes = $attributes;
+        foreach ($attributes as $key => $value) {
+            $this->setAttribute($key, $value);
+        }
 
         return $this;
     }
+
 
     /**
      * Create a new instance of the given model.
