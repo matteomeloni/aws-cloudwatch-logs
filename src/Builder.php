@@ -680,21 +680,31 @@ class Builder
      * Default is current day.
      *
      * @return array
+     * @throws \Exception
      */
     private function extractTimeRange(): array
     {
-        $range = collect($this->wheres)->filter(function ($where) {
-                return $where['column'] === 'timestamp';
-            })->first()['value'] ?? null;
+        $range = collect($this->wheres)
+                ->filter(function ($where) {
+                    return $where['column'] === 'timestamp';
+                })
+                ->first()['value'] ?? $this->getTodayInterval();
 
-        if ($range === null) {
-            return [
-                now()->startOfDay()->timestamp * 1000,
-                now()->endOfDay()->timestamp * 1000
-            ];
-        }
+        return [
+            Helper::getTimestamp($range[0]),
+            Helper::getTimestamp($range[1])
+        ];
+    }
 
-        return $range;
+    /**
+     * @return array
+     */
+    private function getTodayInterval(): array
+    {
+        return [
+            now()->startOfDay()->format('Y-m-d H:i:s'),
+            now()->endOfDay()->format('Y-m-d H:i:s')
+        ];
     }
 
     /**

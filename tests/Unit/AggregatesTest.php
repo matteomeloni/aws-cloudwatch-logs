@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit;
+namespace Matteomeloni\CloudwatchLogs\Tests\Unit;
 
 use Matteomeloni\CloudwatchLogs\Aggregates;
 use Matteomeloni\CloudwatchLogs\Collections\AggregatesCollection;
