@@ -10,6 +10,14 @@ Eloquent syntax for store and retrieve logs from Aws CloudWatch Logs.
 
 * [Usage](#Usage)
   
+  * [Mutators and Casting](#mutators-and-casting)
+    
+    * [Defining An Accessor](#defining-an-accessor)
+    
+    * [Defining A Mutator](#defining-a-mutator)
+    
+    * [Attribute Casting](#attribute-casting)
+  
   * [Retrieving Models](#retrieving-models)
     
     * [Building Queries](#building-queries)
@@ -59,12 +67,81 @@ Update AWS CloudWatch Logs config in `config/aws-cloudwatch-logs.php`
 Extends your model with `Matteomeloni\CloudwatchLogs\CloudWatchLogs`
 
 ```php
+<?php
+
+namespace App\Models;
+
 use Matteomeloni\CloudwatchLogs\CloudWatchLogs;
 
 class Log extends CloudWatchLogs
 {
     protected string $logGroupName = 'LOG GROUP NAME';
     protected string $logStreamName = 'LOG STREAM NAME';
+}
+```
+
+### Mutators and Casting
+
+#### Defining An Accessor
+
+An accessor transforms an attribute value when it is accessed. To define an accessor, create a get {Attribute} Attribute method on your model where {Attribute} is the "studly" cased name of the column you wish to access.
+
+```php
+<?php
+
+namespace App\Models;
+
+use Matteomeloni\CloudwatchLogs\CloudWatchLogs;
+
+class Log extends CloudWatchLogs
+{
+    public function getFooAttribute($value)
+    {
+        return ucfirst($value);
+    }
+}
+```
+
+#### Defining A Mutator
+
+A mutator transforms an attribute value when it is set. To define a mutator, define a `set{Attribute}Attribute` method on your model where `{Attribute}` is the "studly" cased name of the column you wish to access.
+
+```php
+<?php
+
+namespace App\Models;
+
+use Matteomeloni\CloudwatchLogs\CloudWatchLogs;
+
+class Log extends CloudWatchLogs
+{
+    public function setFooAttribute($value)
+    {
+        $this->attributes['foo'] = strtolower($value);
+    }
+}
+```
+
+#### Attribute Casting
+
+Your model's $casts property provides a convenient method of converting attributes to common data types.
+
+The $casts property should be an array where the key is the name of the attribute being cast and the value is the type you wish to cast the column to.
+
+See the [Laravel documentation](https://laravel.com/docs/8.x/eloquent-mutators#attribute-casting) to learn more. 
+
+```php
+<?php
+
+namespace App\Models;
+
+use Matteomeloni\CloudwatchLogs\CloudWatchLogs;
+
+class Log extends CloudWatchLogs
+{
+    protected $casts = [
+        'foo' => 'boolean',
+    ];
 }
 ```
 
@@ -77,6 +154,8 @@ By default, all logs generated on the current day will be extracted.
 If you want to change the time interval, then just use the `whereBetween` method
 
 ```php
+<?php
+
 use App\Models\Log;
 
 // All logs generated on the current day...
@@ -85,7 +164,7 @@ foreach(Logs::all() as $log) {
 }
 
 // All logs generated on custom time interval...
-$logs = Logs::whereBetween('timestamp', [$start, $end])->get();
+$logs = Logs::whereBetween('timestamp', ['Y-m-d H:i:s', 'Y-m-d H:i:s'])->get();
 ```
 
 #### Building Queries
@@ -97,6 +176,8 @@ For more information of this feature, you can see the [Aws CloudWatch Logs Insig
 To start a new query you can use the `query` method and the result of this operation is the `queryId` string, to be used to retrieve the query results:
 
 ```php
+<?php
+
 use App\Models\Log;
 
 // Start a new query and retrieve the queryId string... 
@@ -116,6 +197,8 @@ $logs = Log::queries();
 The `select` method allows you to specify which columns to show in the query result.
 
 ```php
+<?php
+
 use App\Models\Log;
 
 $logs = Log::query()
@@ -133,6 +216,8 @@ $logs = Log::query()
 Avaialable comparison operators: `=` `!=` `<` `<=` `>` `>=`
 
 ```php
+<?php
+
 use App\Models\Log;
 
 // Chainable for 'AND'.
@@ -171,8 +256,9 @@ Sometimes it may be necessary to group several "where" clauses in parentheses to
 To accomplish this, you may pass a closure to the `where` method:
 
 ```php
-use App\Models\Log;
+<?php
 
+use App\Models\Log;
 
 Log::query()
     ->where('column', 'operator', 'value')
@@ -190,6 +276,8 @@ The `orderBy` method allows sorting of the query by a given column.
 The first argument accepted by this metod, should be the column you wish to sort by and the second argument, determines the direction of the sort, `asc` or `desc`
 
 ```php
+<?php
+
 use App\Models\Log;
 
 //Ordering log by column asc...
@@ -207,6 +295,8 @@ Log::query()->orderByDesc('column')->get();
 The `take` or `limit` method allows to limit the number of results returned from the query.
 
 ```php
+<?php
+
 use App\Models\Log;
 
 Log::query()->take(10)->get();
@@ -223,6 +313,8 @@ For more information of this feature, you can see the [Aws CloudWatch Logs Insig
 You may call any of these methods after constructing your query:
 
 ```php
+<?php
+
 use App\Models\Log;
 
 $count = Log::query()
@@ -244,8 +336,9 @@ In this case the result of the operation will be a collection.
 In addition to a specific column, it is also possible to group for all the functions offered by the AWS CloudWatch Logs Insights service.
 
 ```php
-use App\Models\Log;
+<?php
 
+use App\Models\Log;
 
 Log::query()
     ->groupBy('column')
@@ -258,6 +351,8 @@ Log::query()
 In addition to retrieving all of the records matching a given query, you may also retrieve single records using the `find` or `first` methods.
 
 ```php
+<?php
+
 use App\Models\Log;
 
 /**
@@ -283,6 +378,8 @@ To insert a new record into AWS CloudWatch Log, you should instantiate a new mod
 Then, call the save method on the model instance:
 
 ```php
+<?php
+
 use App\Models\Log;
 
 $log = new Log();
@@ -295,6 +392,8 @@ Alternatively, you may use the create method to "save" a new log using a single 
 The inserted log instance will be returned to you by the create method:
 
 ```php
+<?php
+
 use App\Models\Log;
 
 $log = Log::create([
