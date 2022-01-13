@@ -4,7 +4,7 @@ All notable changes to `AwsCloudwatchLogs` will be documented in this file.
 
 ## Version 1.0.5 - 2021-01-13
 
-- cleand up code
+- cleaned up code
 
 ## Version 1.0.4 - 2021-12-07
 
