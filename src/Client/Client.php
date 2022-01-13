@@ -4,6 +4,7 @@ namespace Matteomeloni\CloudwatchLogs\Client;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Illuminate\Support\Str;
+use Matteomeloni\CloudwatchLogs\Contracts\ClientInterface;
 use Matteomeloni\CloudwatchLogs\Traits\HasMessageParser;
 
 class Client implements ClientInterface

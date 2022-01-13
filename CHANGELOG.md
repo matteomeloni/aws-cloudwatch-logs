@@ -2,6 +2,11 @@
 
 All notable changes to `AwsCloudwatchLogs` will be documented in this file.
 
+## Version 1.0.5 - 2021-01-13
+
+- added Accessor, Mutators and Casting
+- improve time interval management
+
 ## Version 1.0.4 - 2021-12-07
 
 - added Accessor, Mutators and Casting

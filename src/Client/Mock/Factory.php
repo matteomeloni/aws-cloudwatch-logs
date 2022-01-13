@@ -4,6 +4,7 @@ namespace Matteomeloni\CloudwatchLogs\Client\Mock;
 
 use Faker\Generator;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Monolog\Logger;
 
@@ -21,6 +22,10 @@ class Factory
      */
     private int $items;
 
+    /**
+     * @param int $items
+     * @throws BindingResolutionException
+     */
     public function __construct(int $items = 1)
     {
         $this->faker = Container::getInstance()->make(Generator::class);

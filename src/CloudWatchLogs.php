@@ -260,7 +260,7 @@ abstract class CloudWatchLogs implements Arrayable, ArrayAccess, Jsonable, JsonS
 
     public function offsetExists($offset): bool
     {
-        return ! is_null($this->getAttribute($offset));
+        return !is_null($this->getAttribute($offset));
     }
 
     public function offsetGet($offset)

@@ -3,6 +3,7 @@
 namespace Matteomeloni\CloudwatchLogs;
 
 use Closure;
+use Exception;
 use Matteomeloni\CloudwatchLogs\Client\Analyzer;
 use Matteomeloni\CloudwatchLogs\Client\Client;
 use Matteomeloni\CloudwatchLogs\Client\QueryBuilder;
@@ -131,8 +132,8 @@ class Builder
             [$value, $operator] = [$operator, '='];
         }
 
-        if($column instanceof Closure && is_null($operator)) {
-           return $this->whereNested($column, $boolean);
+        if ($column instanceof Closure && is_null($operator)) {
+            return $this->whereNested($column, $boolean);
         }
 
         $this->wheres[] = [
@@ -186,7 +187,7 @@ class Builder
      * @param mixed $value
      * @return $this
      */
-    public function orWhere( $column, $operator = null, $value = null): Builder
+    public function orWhere($column, $operator = null, $value = null): Builder
     {
         if (func_num_args() == 2) {
             [$value, $operator] = [$operator, '='];
@@ -341,6 +342,7 @@ class Builder
      * Retrieve the "count" result of the query.
      *
      * @return int|AggregatesCollection|Aggregates
+     * @throws Exception
      */
     public function count()
     {
@@ -352,6 +354,7 @@ class Builder
      *
      * @param string $column
      * @return float|int|AggregatesCollection|Aggregates
+     * @throws Exception
      */
     public function min(string $column)
     {
@@ -363,6 +366,7 @@ class Builder
      *
      * @param string $column
      * @return float|int|AggregatesCollection|Aggregates
+     * @throws Exception
      */
     public function max(string $column)
     {
@@ -374,6 +378,7 @@ class Builder
      *
      * @param string $column
      * @return float|int|AggregatesCollection|Aggregates
+     * @throws Exception
      */
     public function sum(string $column)
     {
@@ -385,6 +390,7 @@ class Builder
      *
      * @param string $column
      * @return float|int|AggregatesCollection|Aggregates
+     * @throws Exception
      */
     public function avg(string $column)
     {
@@ -396,6 +402,7 @@ class Builder
      *
      * @param string $column
      * @return float|int|AggregatesCollection|Aggregates
+     * @throws Exception
      */
     public function average(string $column)
     {
@@ -408,6 +415,7 @@ class Builder
      * @param string $function
      * @param string|null $columns
      * @return float|int|AggregatesCollection|Aggregates
+     * @throws Exception
      */
     public function aggregate(string $function, ?string $columns)
     {
@@ -485,6 +493,7 @@ class Builder
      *
      * @param array $columns
      * @return LogsCollection
+     * @throws Exception
      */
     public function get(array $columns = ['*']): LogsCollection
     {
@@ -496,6 +505,7 @@ class Builder
      *
      * @param array $columns
      * @return LogsCollection
+     * @throws Exception
      */
     public function all(array $columns = ['*']): LogsCollection
     {
@@ -510,6 +520,7 @@ class Builder
      * Get All Logs and make CloudWatchLogsCollection.
      *
      * @return LogsCollection
+     * @throws Exception
      */
     private function getAll(): LogsCollection
     {
@@ -536,6 +547,7 @@ class Builder
      * Retrieve logs from Aws CloudWatch.
      *
      * @return array
+     * @throws Exception
      */
     private function retrieveLogs(): array
     {
@@ -680,7 +692,7 @@ class Builder
      * Default is current day.
      *
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     private function extractTimeRange(): array
     {

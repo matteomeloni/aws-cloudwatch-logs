@@ -33,7 +33,7 @@ class QueriesCollection extends Collection
      */
     public function completed(): QueriesCollection
     {
-        return $this->addfilter('complete');
+        return $this->AddFilter('complete');
     }
 
     /**
@@ -41,7 +41,7 @@ class QueriesCollection extends Collection
      */
     public function scheduled(): QueriesCollection
     {
-        return $this->addfilter('scheduled');
+        return $this->AddFilter('scheduled');
     }
 
     /**
@@ -49,14 +49,14 @@ class QueriesCollection extends Collection
      */
     public function running(): QueriesCollection
     {
-        return $this->addfilter('running');
+        return $this->AddFilter('running');
     }
 
     /**
      * @param $filter
      * @return QueriesCollection
      */
-    private function addfilter($filter): QueriesCollection
+    private function AddFilter($filter): QueriesCollection
     {
         return $this->parsed()->where('status', $filter);
     }

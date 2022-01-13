@@ -127,7 +127,7 @@ class QueryBuilder
         $filter = ($nested === false) ? "| filter " : "";
 
         foreach ($wheres as $index => $where) {
-            if(Arr::exists($where, 'nested')){
+            if (Arr::exists($where, 'nested')) {
                 $filter .= " {$where['boolean']} (" . $this->parseWheres($where['nested'], true) . ')';
             } else {
                 $filter .= $this->getWhereStatement($where, $index === array_key_first($wheres));
@@ -186,7 +186,7 @@ class QueryBuilder
 
         $filter = "| stats {$this->stats['function']}({$this->stats['column']})";
 
-        if(!empty($this->groups)) {
+        if (!empty($this->groups)) {
             $filter .= ' by ' . implode(', ', $this->groups);
         }
 
@@ -218,5 +218,4 @@ class QueryBuilder
 
         return $sort;
     }
-
 }

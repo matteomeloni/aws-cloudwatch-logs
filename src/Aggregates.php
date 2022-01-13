@@ -46,7 +46,7 @@ class Aggregates
      */
     private function extractValue($logResult)
     {
-        if (count($logResult) === 1 ) {
+        if (count($logResult) === 1) {
             $logResult = Arr::first($logResult);
 
             return Arr::first($logResult) + 0;
